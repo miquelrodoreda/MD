@@ -1,3 +1,29 @@
+# Libraries
+#install.packages("psych")
+library(psych)
+
+# Work directory
+setwd("/home/gerard/Desktop/MD/MD/")
+
+# Read dataset
+filename <- "dataset/filtered_data.csv"
+dd <- read.csv(filename)
+dd <- dd[, c("price_level", "vegan_options", "awards", "gluten_free", "cuisines", "original_location", "open_days_per_week", "avg_rating", "total_reviews_count", "food", "service", "atmosphere", "excellent", "meals")]
+
+output_dirs <- c("bivariant/scatterplots", "bivariant/boxplots", "bivariant/histograms", "bivariant/barplots", "bivariant/mosaicplots")
+for (dir in output_dirs) {
+  if (!dir.exists(dir)) {
+    dir.create(dir, recursive = TRUE)
+  }
+}
+
+num_cols <- names(dd)[sapply(dd, is.numeric)]
+cat_cols <- names(dd)[sapply(dd, function(col) is.character(col) || is.factor(col))]
+
+# Iterate over all pairs of columns
+column_pairs <- expand.grid(names(dd), names(dd), stringsAsFactors = FALSE)
+column_pairs <- column_pairs[column_pairs[, 1] != column_pairs[, 2], ]
+
 for (i in seq_len(nrow(column_pairs))) {
   col1 <- column_pairs[i, 1]
   col2 <- column_pairs[i, 2]
@@ -54,3 +80,5 @@ for (i in seq_len(nrow(column_pairs))) {
     dev.off()
   }
 }
+
+print("Done")
