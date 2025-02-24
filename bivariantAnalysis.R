@@ -1,6 +1,7 @@
 # Libraries
 #install.packages("psych")
 library(psych)
+library(RColorBrewer)
 
 # Work directory
 setwd("/home/gerard/Desktop/MD/MD/")
@@ -40,6 +41,13 @@ for (i in seq_len(nrow(column_pairs))) {
   
   # Boxplots and histograms for numeric vs categorical (in both possible orders)
   if ((col1 %in% num_cols && col2 %in% cat_cols) || (col1 %in% cat_cols && col2 %in% num_cols)) {
+    if (col1 %in% num_cols) {
+      numeric_col <- col1
+      categorical_col <- col2
+    } else {
+      numeric_col <- col2
+      categorical_col <- col2
+    }
     valid_data <- dd[!is.na(dd[[col1]]) & !is.na(dd[[col2]]), ]
 
     # Boxplot
@@ -55,11 +63,28 @@ for (i in seq_len(nrow(column_pairs))) {
     # Histogram
     hist_file <- paste0("bivariant/histograms/histogram_", col1, "_", col2, ".png")
     png(hist_file, width = 800, height = 600)
-    if (col1 %in% num_cols) {
-      hist(valid_data[[col1]], main = paste("Histogram of", col1, "grouped by", col2), xlab = col1, col = "lightblue", border = "black", breaks = 20)
-    } else {
-      hist(valid_data[[col2]], main = paste("Histogram of", col2, "grouped by", col1), xlab = col2, col = "lightblue", border = "black", breaks = 20)
+    
+    # Get the unique categories in col2
+    categories <- unique(valid_data[[categorical_col]])
+    category_colors <- brewer.pal(length(categories), "Set3")
+    
+    # Plot the first histogram
+    hist(valid_data[[numeric_col]][valid_data[[categorical_col]] == categories[1]], 
+         main = paste("Overlayed Histogram of", numeric_col, "grouped by", categorical_col),
+         xlab = numeric_col, col = rgb(0, 0, 1, 0.5), border = "black", 
+         breaks = 20, xlim = range(valid_data[[numeric_col]]), probability = TRUE, 
+         freq = FALSE)
+    
+    # Overlay histograms for each category, ensuring the same 'breaks' and transparent colors
+    for (i in seq_along(categories[-1])) {
+      hist(valid_data[[numeric_col]][valid_data[[categorical_col]] == categories[i+1]], 
+           col = category_colors[i], border = "black", 
+           breaks = 20, add = TRUE, probability = TRUE, freq = FALSE)
     }
+    
+    # Add a legend
+    legend("topright", legend = categories, fill = col2rgb(category_colors))
+    
     dev.off()
   }
   

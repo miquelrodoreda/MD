@@ -35,13 +35,11 @@ for (i in seq_len(nrow(column_pairs))) {
   
   # Scatterplots for numeric vs numeric
   if (col1 %in% num_cols && col2 %in% num_cols) {
-    print(paste("Generating scatterplot for", col1, "vs", col2))
     pairs.panels(dd[, c(col1, col2)], method = "pearson", hist.col = "lightblue", density = TRUE, ellipses = TRUE)
   }
   
   # Boxplots and histograms for numeric vs categorical (in both possible orders)
   if ((col1 %in% num_cols && col2 %in% cat_cols) || (col1 %in% cat_cols && col2 %in% num_cols)) {
-    print(paste("Generating boxplot and histogram for", col1, "vs", col2))
     valid_data <- dd[!is.na(dd[[col1]]) & !is.na(dd[[col2]]), ]
     
     # Boxplot
