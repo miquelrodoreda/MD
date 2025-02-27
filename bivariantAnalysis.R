@@ -1,158 +1,109 @@
 # Libraries
 #install.packages("psych")
 library(psych)
+library(RColorBrewer)
 
 # Work directory
-setwd("/home/joan/Documents/Ricard/UPC/MD")
+setwd("/home/gerard/Desktop/MD/MD/")
 
 # Read dataset
-filename = "MD/dataset/cleaned.csv"
-dd <- read.table(filename, header = TRUE, sep = ",", fill = TRUE)
-dd
-dim(dd)
-n <- dim(dd)[1]
-n
-K <- dim(dd)[2]
-K
-names(dd)
+filename <- "dataset/filtered_data.csv"
+dd <- read.csv(filename)
+dd <- dd[, c("price_level", "vegan_options", "awards", "gluten_free", "cuisines", "original_location", "open_days_per_week", "avg_rating", "total_reviews_count", "food", "service", "atmosphere", "excellent", "meals")]
 
-# Folder for scatterplots
-output_dir <- "bivariant/scatterplots"
-if (!dir.exists(output_dir)) {
-  dir.create(output_dir, recursive = TRUE)
-}
-
-# Filter numeric columns
-num_cols_indexes <- c(4, 5, 6, 7, 8, 9, 10)
-num_cols <- names(dd)[num_cols_indexes]  # Obtener nombres de las columnas numéricas
-
-# Iterate through all combinations between numeric columns
-combinations <- combn(num_cols, 2, simplify = FALSE)
-
-for (i in seq_along(combinations)) {
-  cols <- combinations[[i]]
-  
-  file_name <- paste0(output_dir, "/scatterplot", i, ".png")
-  png(file_name, width = 800, height = 600)
-  
-  pairs.panels(dd[, cols], 
-               method = "pearson",
-               hist.col = "lightblue", 
-               density = TRUE,
-               ellipses = TRUE)
-  
-  dev.off()
-}
-
-# Filter numeric columns
-cat_cols_indexes <- c(12, 1, 13, 11, 2, 3)
-cat_cols <- names(dd)[cat_cols_indexes]  # Obtener nombres de las columnas categoricas
-
-# Folder for boxplots
-output_dir <- "bivariant/boxplots"
-if (!dir.exists(output_dir)) {
-  dir.create(output_dir, recursive = TRUE)
-}
-
-# Folder for histograms
-output_dir <- "bivariant/histograms"
-if (!dir.exists(output_dir)) {
-  dir.create(output_dir, recursive = TRUE)
-}
-
-# Iterate through all combinations between numeric and categoric columns
-combinations <- expand.grid(num_cols, cat_cols, stringsAsFactors = FALSE)
-
-# Iterate through all combinations between numeric and categorical columns
-# Iterate through all combinations between numeric and categorical columns
-for (i in seq_len(nrow(combinations))) {
-  num_col <- combinations[i, 1]
-  cat_col <- combinations[i, 2] 
-  
-  # Filtrar datos no numéricos o NA
-  valid_data <- dd[!is.na(dd[[num_col]]) & !is.na(dd[[cat_col]]), ]
-
-  # Comprobar si num_col sigue siendo numérico
-  if (!is.numeric(valid_data[[num_col]])) {
-    print(paste("Skipping", num_col, "as it is not numeric"))
-    next
+output_dirs <- c("bivariant/scatterplots", "bivariant/boxplots", "bivariant/histograms", "bivariant/barplots", "bivariant/mosaicplots")
+for (dir in output_dirs) {
+  if (!dir.exists(dir)) {
+    dir.create(dir, recursive = TRUE)
   }
+}
 
-  # Comprobar si cat_col sigue siendo categórico
-  if (!is.factor(valid_data[[cat_col]]) && !is.character(valid_data[[cat_col]])) {
-    print(paste("Skipping", cat_col, "as it is not categorical"))
-    next
+num_cols <- names(dd)[sapply(dd, is.numeric)]
+cat_cols <- names(dd)[sapply(dd, function(col) is.character(col) || is.factor(col))]
+
+# Iterate over all pairs of columns
+column_pairs <- expand.grid(names(dd), names(dd), stringsAsFactors = FALSE)
+column_pairs <- column_pairs[column_pairs[, 1] != column_pairs[, 2], ]
+
+for (i in seq_len(nrow(column_pairs))) {
+  col1 <- column_pairs[i, 1]
+  col2 <- column_pairs[i, 2]
+  
+  if (col1 > col2) next
+  
+  # Scatterplots for numeric vs numeric
+  if (col1 %in% num_cols && col2 %in% num_cols) {
+    file_name <- paste0("bivariant/scatterplots/scatterplot_", col1, "_", col2, ".png")
+    png(file_name, width = 800, height = 600)
+    pairs.panels(dd[, c(col1, col2)], method = "pearson", hist.col = "lightblue", density = TRUE, ellipses = TRUE)
+    dev.off()
   }
+  
+  # Boxplots and histograms for numeric vs categorical (in both possible orders)
+  if ((col1 %in% num_cols && col2 %in% cat_cols) || (col1 %in% cat_cols && col2 %in% num_cols)) {
+    if (col1 %in% num_cols) {
+      numeric_col <- col1
+      categorical_col <- col2
+    } else {
+      numeric_col <- col2
+      categorical_col <- col2
+    }
+    valid_data <- dd[!is.na(dd[[col1]]) & !is.na(dd[[col2]]), ]
 
-  # Boxplot
-  boxplot_file <- paste0("bivariant/boxplots/boxplot_", num_col, "_", cat_col, ".png")
-  png(boxplot_file, width = 800, height = 600)
+    # Boxplot
+    boxplot_file <- paste0("bivariant/boxplots/boxplot_", col1, "_", col2, ".png")
+    png(boxplot_file, width = 800, height = 600)
+    if (col1 %in% num_cols) {
+      boxplot(valid_data[[col1]] ~ valid_data[[col2]], main = paste("Boxplot of", col1, "by", col2), xlab = col2, ylab = col1, col = "lightblue", border = "black")
+    } else {
+      boxplot(valid_data[[col2]] ~ valid_data[[col1]], main = paste("Boxplot of", col2, "by", col1), xlab = col1, ylab = col2, col = "lightblue", border = "black")
+    }
+    dev.off()
+    
+    # Histogram
+    hist_file <- paste0("bivariant/histograms/histogram_", col1, "_", col2, ".png")
+    png(hist_file, width = 800, height = 600)
+    
+    # Get the unique categories in col2
+    categories <- unique(valid_data[[categorical_col]])
+    category_colors <- brewer.pal(length(categories), "Set3")
+    
+    # Plot the first histogram
+    hist(valid_data[[numeric_col]][valid_data[[categorical_col]] == categories[1]], 
+         main = paste("Overlayed Histogram of", numeric_col, "grouped by", categorical_col),
+         xlab = numeric_col, col = rgb(0, 0, 1, 0.5), border = "black", 
+         breaks = 20, xlim = range(valid_data[[numeric_col]]), probability = TRUE, 
+         freq = FALSE)
+    
+    # Overlay histograms for each category, ensuring the same 'breaks' and transparent colors
+    for (i in seq_along(categories[-1])) {
+      hist(valid_data[[numeric_col]][valid_data[[categorical_col]] == categories[i+1]], 
+           col = category_colors[i], border = "black", 
+           breaks = 20, add = TRUE, probability = TRUE, freq = FALSE)
+    }
+    
+    # Add a legend
+    legend("topright", legend = categories, fill = col2rgb(category_colors))
+    
+    dev.off()
+  }
   
-  boxplot(valid_data[[num_col]] ~ valid_data[[cat_col]], 
-          main = paste("Boxplot of", num_col, "by", cat_col),
-          xlab = cat_col, 
-          ylab = num_col,
-          col = "lightblue", 
-          border = "black")
-  
-  dev.off()
-  
-  # Histogram
-  hist_file <- paste0("bivariant/histograms/histogram_", num_col, "_", cat_col, ".png")
-  png(hist_file, width = 800, height = 600)
-  
-  hist(valid_data[[num_col]], 
-       main = paste("Histogram of", num_col, "grouped by", cat_col),
-       xlab = num_col, 
-       col = "lightblue", 
-       border = "black",
-       breaks = 20)
-  
-  dev.off()
-}
-
-
-# Folder for barplots
-barplot_dir <- "bivariant/barplots"
-if (!dir.exists(barplot_dir)) {
-  dir.create(barplot_dir, recursive = TRUE)
-}
-
-# Folder for mosaic plots
-mosaicplot_dir <- "bivariant/mosaicplots"
-if (!dir.exists(mosaicplot_dir)) {
-  dir.create(mosaicplot_dir, recursive = TRUE)
-}
-
-# Iterate through all combinations between categorical columns
-cat_combinations <- combn(cat_cols, 2, simplify = FALSE)
-
-for (i in seq_along(cat_combinations)) {
-  cols <- cat_combinations[[i]]
-  cat1 <- cols[1]
-  cat2 <- cols[2]
-  
-  # Create a contingency table
-  contingency_table <- table(dd[[cat1]], dd[[cat2]])
-  
-  # Barplot Bivariant
-  barplot_file <- paste0(barplot_dir, "/barplot_", cat1, "_", cat2, ".png")
-  png(barplot_file, width = 800, height = 600)
-  
-  barplot(contingency_table, beside = TRUE, col = rainbow(nrow(contingency_table)),
-          main = paste("Barplot of", cat1, "vs", cat2),
-          xlab = cat1, ylab = "Count", legend = TRUE)
-  
-  dev.off()
-  
-  # Mosaic Plot
-  mosaicplot_file <- paste0(mosaicplot_dir, "/mosaicplot_", cat1, "_", cat2, ".png")
-  png(mosaicplot_file, width = 800, height = 600)
-  
-  mosaicplot(contingency_table, main = paste("Mosaic Plot of", cat1, "vs", cat2),
-             color = TRUE, shade = TRUE, las = 2)
-  
-  dev.off()
+  # Barplots and mosaic plots for categorical vs categorical
+  if (col1 %in% cat_cols && col2 %in% cat_cols) {
+    contingency_table <- table(dd[[col1]], dd[[col2]])
+    
+    # Barplot
+    barplot_file <- paste0("bivariant/barplots/barplot_", col1, "_", col2, ".png")
+    png(barplot_file, width = 800, height = 600)
+    barplot(contingency_table, beside = TRUE, col = rainbow(nrow(contingency_table)), main = paste("Barplot of", col1, "vs", col2), xlab = col1, ylab = "Count", legend = TRUE)
+    dev.off()
+    
+    # Mosaicplot
+    mosaicplot_file <- paste0("bivariant/mosaicplots/mosaicplot_", col1, "_", col2, ".png")
+    png(mosaicplot_file, width = 800, height = 600)
+    mosaicplot(contingency_table, main = paste("Mosaic Plot of", col1, "vs", col2), color = TRUE, shade = TRUE, las = 2)
+    dev.off()
+  }
 }
 
 print("Done")
