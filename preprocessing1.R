@@ -55,7 +55,7 @@ dd <- dd %>%
 table(dd$Nom.de.la.comarca)
 
 dd$original_location[dd$Nom.de.la.comarca == "NotFound"]
-dd$original_location_clean[dd$Nom.de.la.comarca == "NotFound"]
+dd$municipi[dd$Nom.de.la.comarca == "NotFound"]
 
 dd <- dd[, c("price_level", "vegan_options", "awards", "gluten_free", "cuisines", "Nom.de.la.comarca", "open_days_per_week", "avg_rating", "total_reviews_count", "food", "service", "atmosphere", "excellent", "meals")]
 
