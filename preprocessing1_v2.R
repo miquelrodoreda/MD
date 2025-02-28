@@ -143,7 +143,9 @@ dd <- dd %>%
 
 unique(dd$awards)
 
-dd$awards[is.na(dd$awards)] <- "No premiado"
+dd$awards[is.na(dd$awards)] <- "Not Awarded"
+
+
 
 # ------------------------------------- saving -------------------------------------
 
