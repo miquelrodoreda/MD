@@ -1,34 +1,61 @@
+# install.packages("RColorBrewer")
 library(RColorBrewer)
 library(dplyr)
 # install.packages("stringr")
 library(stringr)
+# install.packages("VIM")
+library(VIM)
 
-setwd("/home/carles/Descargas/")
+library(stringi)
 
-filename <- "filtered_data.csv"
+setwd("/Users/miquelrodoreda/uni/MD")
+
+filename <- "dataset/filtered_data.csv"
 file.exists(filename)
 dd <- read.csv(filename)
 dd <- dd[, c("price_level", "vegan_options", "awards", "gluten_free", "cuisines", "original_location", "open_days_per_week", "avg_rating", "total_reviews_count", "food", "service", "atmosphere", "excellent", "meals")]
+
+barplot(table(dd$original_location))
 
 # ------------------------------------- original_location cleaning -------------------------------------
 unique(dd$original_location)
 
 dd <- dd %>%
-  mutate(original_location = str_extract(original_location, "[^,]+(?=\\]$)") %>%
+  mutate(municipi = str_extract(original_location, "[^,]+(?=\\]$)") %>%
            str_replace_all('""', '') %>%
            str_remove_all('"') %>%
-           str_trim())
-print(dd$original_location)
+           str_remove_all('\'') %>%
+           str_remove_all(' ') %>%
+           str_remove_all('-') %>%
+           #str_remove_all('\\') %>%
+           str_trim() %>%
+           stri_trans_general(id = "Latin-ASCII") %>%
+           str_to_lower())
+print(dd$municipi)
 
-municipios_comarcas <- read.csv("comarcas.csv")
+municipis_comarques <- read.csv("dataset/comarcas.csv")
 
-print(municipios_comarcas)
+municipis_comarques$Nom.del.municipi <- stri_trans_general(str = municipis_comarques$Nom.del.municipi, id = "Latin-ASCII")
+municipis_comarques <- municipis_comarques %>%
+  mutate(Nom.del.municipi = str_replace_all(Nom.del.municipi, '""', '') %>%
+           str_remove_all('"') %>%
+           str_remove_all('\'') %>%
+           str_remove_all(' ') %>%
+           str_remove_all('-') %>%
+           str_trim() %>%
+           stri_trans_general(id = "Latin-ASCII") %>%
+           str_to_lower())
+
+municipis_comarques$Nom.del.municipi
 
 dd <- dd %>%
-  left_join(municipios_comarcas, by = c("original_location" = "Nom.del.municipi")) %>%
+  left_join(municipis_comarques, by = c("municipi" = "Nom.del.municipi")) %>%
   mutate(Nom.de.la.comarca = ifelse(is.na(Nom.de.la.comarca), "NotFound", Nom.de.la.comarca))
 
 table(dd$Nom.de.la.comarca)
+
+dd$original_location[dd$Nom.de.la.comarca == "NotFound"]
+dd$original_location_clean[dd$Nom.de.la.comarca == "NotFound"]
 
 dd <- dd[, c("price_level", "vegan_options", "awards", "gluten_free", "cuisines", "Nom.de.la.comarca", "open_days_per_week", "avg_rating", "total_reviews_count", "food", "service", "atmosphere", "excellent", "meals")]
 
@@ -67,6 +94,42 @@ dd <- dd %>%
 
 unique(dd$meals)
 
+# ------------------------------------- service cleaning -------------------------------------
+
+unique(dd$service)
+
+dd$service[is.na(dd$service)] <- median(dd$service, na.rm=TRUE)
+
+unique(dd$service)
+
+# ------------------------------------- food cleaning -------------------------------------
+
+unique(dd$food)
+
+dd$food[is.na(dd$food)] <- median(dd$food, na.rm=TRUE)
+
+unique(dd$food)
+
+# ------------------------------------- atmosphere cleaning -------------------------------------
+
+unique(dd$atmosphere)
+
+numerics <- unlist(lapply(dd, is.numeric), use.names = FALSE)
+cor(dd[!is.na(dd$atmosphere), numerics])
+
+var(dd$atmosphere, na.rm = TRUE)
+
+for (k_value in c(2, 3, 5, 10)) { 
+  dd_imputed <- kNN(dd, variable = "atmosphere", k = k_value, dist_var = c("service", "food", "avg_rating"), imp_var = TRUE) 
+  print(paste("k =", k_value, " - atmosphere variance:", var(dd_imputed$atmosphere, na.rm = TRUE))) 
+}
+
+dd <- kNN(dd, variable = "atmosphere", k = 3, dist_var = c("service", "food", "avg_rating"), imp_var = FALSE)
+
+
+unique(dd$atmosphere)
+
+
 # ------------------------------------- saving -------------------------------------
 
-write.table(dd, file = "preprocessing1.csv", sep = ";", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE)
+write.table(dd, file = "dataset/preprocessing1.csv", sep = ";", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE)
