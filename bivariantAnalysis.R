@@ -5,10 +5,10 @@ library(RColorBrewer)
 library(ggplot2)
 
 # Work directory
-setwd("/home/gerard/Desktop/MD/MD/")
+setwd("/home/carles/Descargas/")
 
 # Read dataset
-filename <- "dataset/filtered_data.csv"
+filename <- "filtered_data.csv"
 dd <- read.csv(filename)
 dd <- dd[, c("price_level", "vegan_options", "awards", "gluten_free", "cuisines", "original_location", "open_days_per_week", "avg_rating", "total_reviews_count", "food", "service", "atmosphere", "excellent", "meals")]
 

@@ -1,16 +1,17 @@
 # install.packages("RColorBrewer")
 library(RColorBrewer)
 library(dplyr)
-# install.packages("stringr")
+#install.packages("dplyr")
+ #install.packages("stringi")
 library(stringr)
-# install.packages("VIM")
+ #install.packages("VIM")
 library(VIM)
 
 library(stringi)
 
-setwd("/Users/miquelrodoreda/uni/MD")
+setwd("/home/carles/Descargas/")
 
-filename <- "dataset/filtered_data.csv"
+filename <- "filtered_data.csv"
 file.exists(filename)
 dd <- read.csv(filename)
 dd <- dd[, c("price_level", "vegan_options", "awards", "gluten_free", "cuisines", "original_location", "open_days_per_week", "avg_rating", "total_reviews_count", "food", "service", "atmosphere", "excellent", "meals")]
@@ -130,6 +131,50 @@ dd <- kNN(dd, variable = "atmosphere", k = 3, dist_var = c("service", "food", "a
 unique(dd$atmosphere)
 
 
+# ------------------------------------- awards -------------------------------------
+
+unique(dd$awards)
+
+
+
+dd <- dd %>%
+  mutate(awards = str_extract(awards, "Certificate of Excellence \\d{4}"))
+
+
+unique(dd$awards)
+
+dd$awards[is.na(dd$awards)] <- "Not Awarded"
+
+# ------------------------------------- cuisines -------------------------------------
+
+classify_cuisine <- function(cuisine) {
+  if (grepl("Mediterranean|Spanish|Catalan|Italian|French|German|Polish|Portuguese|British|Neapolitan|Sicilian|Tuscan|Belgian|Northern-Italian|Central European|Russian|Swiss|Hungarian|Dutch", cuisine, ignore.case = TRUE)) {
+    return("European")
+  }
+  if (grepl("Chinese|Japanese|Korean|Vietnamese|Thai|Taiwanese|Indonesian|Filipino|Singaporean|Middle Eastern|Azerbaijani|Yunnan|Central Asian|Japanese Fusion|Sushi", cuisine, ignore.case = TRUE)) {
+    return("Asian")
+  }
+  if (grepl("Mexican|Latin|South American|Central American|Argentinian|Brazilian|Peruvian|Chilean|Colombian|Venezuelan|Cuban|Caribbean", cuisine, ignore.case = TRUE)) {
+    return("Latin American")
+  }
+  if (grepl("American|Steakhouse|Barbecue|Fast food|Grill|Diner|Bar|Pub|Gastropub|Wine Bar|Brew Pub|Dining bars", cuisine, ignore.case = TRUE)) {
+    return("American")
+  }
+  if (grepl("Mediterranean|Healthy|Contemporary|Soups|Sardinian|Balti", cuisine, ignore.case = TRUE)) {
+    return("Healthy")
+  }
+  if (grepl("Fusion|International", cuisine, ignore.case = TRUE)) {
+    return("Fusion / International")
+  }
+  if (grepl("Seafood", cuisine, ignore.case = TRUE)) {
+    return("Seafood / Fish")
+  }
+  return("Others")
+}
+
+# Aplicar la clasificación a la columna directamente
+dd$cuisines <- sapply(dd$cuisines, classify_cuisine)
+
 # ------------------------------------- saving -------------------------------------
 
-write.table(dd, file = "dataset/preprocessing1.csv", sep = ";", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE)
+write.table(dd, file = "dataset/preprocessed.csv", sep = ";", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE)
