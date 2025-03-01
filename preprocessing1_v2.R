@@ -145,7 +145,35 @@ unique(dd$awards)
 
 dd$awards[is.na(dd$awards)] <- "Not Awarded"
 
+# ------------------------------------- cuisines -------------------------------------
 
+classify_cuisine <- function(cuisine) {
+  if (grepl("Mediterranean|Spanish|Catalan|Italian|French|German|Polish|Portuguese|British|Neapolitan|Sicilian|Tuscan|Belgian|Northern-Italian|Central European|Russian|Swiss|Hungarian|Dutch", cuisine, ignore.case = TRUE)) {
+    return("European")
+  }
+  if (grepl("Chinese|Japanese|Korean|Vietnamese|Thai|Taiwanese|Indonesian|Filipino|Singaporean|Middle Eastern|Azerbaijani|Yunnan|Central Asian|Japanese Fusion|Sushi", cuisine, ignore.case = TRUE)) {
+    return("Asian")
+  }
+  if (grepl("Mexican|Latin|South American|Central American|Argentinian|Brazilian|Peruvian|Chilean|Colombian|Venezuelan|Cuban|Caribbean", cuisine, ignore.case = TRUE)) {
+    return("Latin American")
+  }
+  if (grepl("American|Steakhouse|Barbecue|Fast food|Grill|Diner|Bar|Pub|Gastropub|Wine Bar|Brew Pub|Dining bars", cuisine, ignore.case = TRUE)) {
+    return("American")
+  }
+  if (grepl("Mediterranean|Healthy|Contemporary|Soups|Sardinian|Balti", cuisine, ignore.case = TRUE)) {
+    return("Healthy")
+  }
+  if (grepl("Fusion|International", cuisine, ignore.case = TRUE)) {
+    return("Fusion / International")
+  }
+  if (grepl("Seafood", cuisine, ignore.case = TRUE)) {
+    return("Seafood / Fish")
+  }
+  return("Others")
+}
+
+# Aplicar la clasificación a la columna directamente
+dd$cuisines <- sapply(dd$cuisines, classify_cuisine)
 
 # ------------------------------------- saving -------------------------------------
 
