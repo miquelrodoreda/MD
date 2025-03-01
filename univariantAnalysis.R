@@ -9,12 +9,14 @@ library(ggplot2)
 library(dplyr)
 library(readr)
 
-# Optionally, set the working directory (uncomment and adjust the path if needed)
-# setwd("/path/to/your/project/folder")
+# Work directory
+setwd("/Users/miquelrodoreda/uni/MD")
 
-# Read the dataset from cleaned.csv
-data_file <- "dataset/preprocessed.csv"
-dd <- read.table(data_file, header = TRUE, sep = ",", fill = TRUE)
+# Read dataset
+filename <- "dataset/preprocessed.csv"
+base_output_dir <- "univariant_after/"
+dd <- read.csv(filename)
+dd <- dd[, c("price_level", "vegan_options", "awards", "gluten_free", "cuisines", "original_location", "open_days_per_week", "avg_rating", "total_reviews_count", "food", "service", "atmosphere", "excellent", "meals")]
 
 # Display a summary of the dataset
 print(dd)
@@ -26,7 +28,7 @@ cat("Number of variables: ", K, "\n")
 print(names(dd))
 
 # Define output directory for all plots
-plots_dir <- "univariant_after/plots"
+plots_dir <- "univariant_before/plots"
 
 # Create the output directory if it doesn't exist
 if (!dir.exists(plots_dir)) {
@@ -41,7 +43,7 @@ cat("Numeric variables: ", paste(numeric_vars, collapse = ", "), "\n")
 cat("Categorical variables: ", paste(categorical_vars, collapse = ", "), "\n")
 
 # Function to generate and save histogram and boxplot for numeric variables
-plot_numeric <- function(data, var_name, out_dir, counter) {
+plot_numeric <- function(data, var_name, out_dir) {
   data_var <- data[[var_name]]
   # Remove NA values
   data_var <- data_var[!is.na(data_var)]
@@ -64,7 +66,7 @@ plot_numeric <- function(data, var_name, out_dir, counter) {
     theme_minimal()
   
   # Save histogram to file with numbered filename
-  hist_file <- file.path(out_dir, paste0("histogram", counter, ".png"))
+  hist_file <- file.path(out_dir, paste0("histogram_", var_name, ".png"))
   ggsave(hist_file, plot = p_hist, width = 7, height = 5)
   
   # Create boxplot
@@ -74,14 +76,14 @@ plot_numeric <- function(data, var_name, out_dir, counter) {
     theme_minimal()
   
   # Save boxplot to file with numbered filename
-  box_file <- file.path(out_dir, paste0("boxplot", counter, ".png"))
+  box_file <- file.path(out_dir, paste0("boxplot_", var_name, ".png"))
   ggsave(box_file, plot = p_box, width = 7, height = 5)
   
   cat("Plots saved for numeric variable:", var_name, "\n")
 }
 
 # Function to generate and save barplot for categorical variables
-plot_categorical <- function(data, var_name, out_dir, counter) {
+plot_categorical <- function(data, var_name, out_dir) {
   data_var <- data[[var_name]]
   # Remove NA values
   data_var <- data_var[!is.na(data_var)]
@@ -101,26 +103,20 @@ plot_categorical <- function(data, var_name, out_dir, counter) {
     coord_flip()
   
   # Save barplot to file with numbered filename
-  bar_file <- file.path(out_dir, paste0("barplot", counter, ".png"))
+  bar_file <- file.path(out_dir, paste0("barplot_", var_name, ".png"))
   ggsave(bar_file, plot = p, width = 7, height = 5)
   
   cat("Plot saved for categorical variable:", var_name, "\n")
 }
 
-# Initialize counters for numeric and categorical plots
-numeric_counter <- 1
-categorical_counter <- 1
-
 # Generate plots for all numeric variables
 for (var in numeric_vars) {
-  plot_numeric(dd, var, plots_dir, numeric_counter)
-  numeric_counter <- numeric_counter + 1
+  plot_numeric(dd, var, plots_dir)
 }
 
 # Generate plots for all categorical variables
 for (var in categorical_vars) {
-  plot_categorical(dd, var, plots_dir, categorical_counter)
-  categorical_counter <- categorical_counter + 1
+  plot_categorical(dd, var, plots_dir)
 }
 
 cat("Univariate analysis completed.\n")
