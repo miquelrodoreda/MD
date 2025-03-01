@@ -2,6 +2,7 @@
 #install.packages("psych")
 library(psych)
 library(RColorBrewer)
+library(ggplot2)
 
 # Work directory
 setwd("/home/gerard/Desktop/MD/MD/")
@@ -11,7 +12,7 @@ filename <- "dataset/filtered_data.csv"
 dd <- read.csv(filename)
 dd <- dd[, c("price_level", "vegan_options", "awards", "gluten_free", "cuisines", "original_location", "open_days_per_week", "avg_rating", "total_reviews_count", "food", "service", "atmosphere", "excellent", "meals")]
 
-output_dirs <- c("bivariant/scatterplots", "bivariant/boxplots", "bivariant/histograms", "bivariant/barplots", "bivariant/mosaicplots")
+output_dirs <- c("bivariant/scatterplots", "bivariant/boxplots", "bivariant/histograms", "bivariant/barplots", "bivariant/mosaicplots", "bivariant/contingency_table")
 for (dir in output_dirs) {
   if (!dir.exists(dir)) {
     dir.create(dir, recursive = TRUE)
@@ -46,7 +47,7 @@ for (i in seq_len(nrow(column_pairs))) {
       categorical_col <- col2
     } else {
       numeric_col <- col2
-      categorical_col <- col2
+      categorical_col <- col1
     }
     valid_data <- dd[!is.na(dd[[col1]]) & !is.na(dd[[col2]]), ]
 
@@ -62,35 +63,37 @@ for (i in seq_len(nrow(column_pairs))) {
     
     # Histogram
     hist_file <- paste0("bivariant/histograms/histogram_", col1, "_", col2, ".png")
-    png(hist_file, width = 800, height = 600)
-    
+
     # Get the unique categories in col2
     categories <- unique(valid_data[[categorical_col]])
-    category_colors <- brewer.pal(length(categories), "Set3")
+    num_categories <- length(unique(valid_data[[categorical_col]]))
+    category_colors <- colorRampPalette(brewer.pal(12, "Set3"))(num_categories)
     
-    # Plot the first histogram
-    hist(valid_data[[numeric_col]][valid_data[[categorical_col]] == categories[1]], 
-         main = paste("Overlayed Histogram of", numeric_col, "grouped by", categorical_col),
-         xlab = numeric_col, col = rgb(0, 0, 1, 0.5), border = "black", 
-         breaks = 20, xlim = range(valid_data[[numeric_col]]), probability = TRUE, 
-         freq = FALSE)
+    ggplot(valid_data, aes(x = .data[[numeric_col]], fill = .data[[categorical_col]], y = after_stat(density))) +
+      geom_histogram(position = "identity", alpha = 0.5, bins = 20, color = "black") +
+      labs(title = paste("Overlayed Histogram of", numeric_col, "grouped by", categorical_col),
+           x = numeric_col, y = "Density", fill = categorical_col) +
+      theme_minimal()
     
-    # Overlay histograms for each category, ensuring the same 'breaks' and transparent colors
-    for (i in seq_along(categories[-1])) {
-      hist(valid_data[[numeric_col]][valid_data[[categorical_col]] == categories[i+1]], 
-           col = category_colors[i], border = "black", 
-           breaks = 20, add = TRUE, probability = TRUE, freq = FALSE)
-    }
+    # Save the plot
+    hist_file <- paste0("bivariant/histograms/histogram_", col1, "_", col2, ".png")
+    ggsave(hist_file, width = 8, height = 6, dpi = 300)
     
-    # Add a legend
-    legend("topright", legend = categories, fill = col2rgb(category_colors))
-    
-    dev.off()
   }
   
   # Barplots and mosaic plots for categorical vs categorical
   if (col1 %in% cat_cols && col2 %in% cat_cols) {
     contingency_table <- table(dd[[col1]], dd[[col2]])
+    df_table <- as.data.frame(as.table(contingency_table))
+    p <- ggplot(df_table, aes(x = Var2, y = Var1, fill = Freq)) +
+      geom_tile(color = "white") +
+      scale_fill_gradient(low = "white", high = "blue") +
+      labs(title = "Contingency Table Heatmap", x = col1, y = col2, fill = "Count") +
+      theme_minimal()
+    
+    # Save as PNG
+    contingency_table_file <- paste0("bivariant/contingency_table/contingency_table_", col1, "_", col2, ".png")
+    ggsave(contingency_table_file, plot = p, width = 8, height = 6, dpi = 300)
     
     # Barplot
     barplot_file <- paste0("bivariant/barplots/barplot_", col1, "_", col2, ".png")
