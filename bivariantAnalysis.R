@@ -5,14 +5,15 @@ library(RColorBrewer)
 library(ggplot2)
 
 # Work directory
-setwd("/home/carles/Descargas/")
+setwd("/Users/miquelrodoreda/uni/MD")
 
 # Read dataset
-filename <- "filtered_data.csv"
+filename <- "dataset/filtered_data.csv"
+base_output_dir <- "bivariant_before/"
 dd <- read.csv(filename)
 dd <- dd[, c("price_level", "vegan_options", "awards", "gluten_free", "cuisines", "original_location", "open_days_per_week", "avg_rating", "total_reviews_count", "food", "service", "atmosphere", "excellent", "meals")]
 
-output_dirs <- c("bivariant/scatterplots", "bivariant/boxplots", "bivariant/histograms", "bivariant/barplots", "bivariant/mosaicplots", "bivariant/contingency_table")
+output_dirs <- c(paste0(base_output_dir, "scatterplots"), paste0(base_output_dir, "boxplots"), paste0(base_output_dir, "histograms"), paste0(base_output_dir, "barplots"), paste0(base_output_dir, "mosaicplots"), paste0(base_output_dir, "contingency_table"))
 for (dir in output_dirs) {
   if (!dir.exists(dir)) {
     dir.create(dir, recursive = TRUE)
@@ -34,7 +35,7 @@ for (i in seq_len(nrow(column_pairs))) {
   
   # Scatterplots for numeric vs numeric
   if (col1 %in% num_cols && col2 %in% num_cols) {
-    file_name <- paste0("bivariant/scatterplots/scatterplot_", col1, "_", col2, ".png")
+    file_name <- paste0(base_output_dir, "scatterplots/scatterplot_", col1, "_", col2, ".png")
     png(file_name, width = 800, height = 600)
     pairs.panels(dd[, c(col1, col2)], method = "pearson", hist.col = "lightblue", density = TRUE, ellipses = TRUE)
     dev.off()
@@ -52,7 +53,7 @@ for (i in seq_len(nrow(column_pairs))) {
     valid_data <- dd[!is.na(dd[[col1]]) & !is.na(dd[[col2]]), ]
 
     # Boxplot
-    boxplot_file <- paste0("bivariant/boxplots/boxplot_", col1, "_", col2, ".png")
+    boxplot_file <- paste0(base_output_dir, "boxplots/boxplot_", col1, "_", col2, ".png")
     png(boxplot_file, width = 800, height = 600)
     if (col1 %in% num_cols) {
       boxplot(valid_data[[col1]] ~ valid_data[[col2]], main = paste("Boxplot of", col1, "by", col2), xlab = col2, ylab = col1, col = "lightblue", border = "black")
@@ -62,7 +63,7 @@ for (i in seq_len(nrow(column_pairs))) {
     dev.off()
     
     # Histogram
-    hist_file <- paste0("bivariant/histograms/histogram_", col1, "_", col2, ".png")
+    hist_file <- paste0(base_output_dir, "histograms/histogram_", col1, "_", col2, ".png")
 
     # Get the unique categories in col2
     categories <- unique(valid_data[[categorical_col]])
@@ -76,7 +77,7 @@ for (i in seq_len(nrow(column_pairs))) {
       theme_minimal()
     
     # Save the plot
-    hist_file <- paste0("bivariant/histograms/histogram_", col1, "_", col2, ".png")
+    hist_file <- paste0(base_output_dir, "histograms/histogram_", col1, "_", col2, ".png")
     ggsave(hist_file, width = 8, height = 6, dpi = 300)
     
   }
@@ -92,17 +93,17 @@ for (i in seq_len(nrow(column_pairs))) {
       theme_minimal()
     
     # Save as PNG
-    contingency_table_file <- paste0("bivariant/contingency_table/contingency_table_", col1, "_", col2, ".png")
+    contingency_table_file <- paste0(base_output_dir, "contingency_table/contingency_table_", col1, "_", col2, ".png")
     ggsave(contingency_table_file, plot = p, width = 8, height = 6, dpi = 300)
     
     # Barplot
-    barplot_file <- paste0("bivariant/barplots/barplot_", col1, "_", col2, ".png")
+    barplot_file <- paste0(base_output_dir, "barplots/barplot_", col1, "_", col2, ".png")
     png(barplot_file, width = 800, height = 600)
     barplot(contingency_table, beside = TRUE, col = rainbow(nrow(contingency_table)), main = paste("Barplot of", col1, "vs", col2), xlab = col1, ylab = "Count", legend = TRUE)
     dev.off()
     
     # Mosaicplot
-    mosaicplot_file <- paste0("bivariant/mosaicplots/mosaicplot_", col1, "_", col2, ".png")
+    mosaicplot_file <- paste0(base_output_dir, "mosaicplots/mosaicplot_", col1, "_", col2, ".png")
     png(mosaicplot_file, width = 800, height = 600)
     mosaicplot(contingency_table, main = paste("Mosaic Plot of", col1, "vs", col2), color = TRUE, shade = TRUE, las = 2)
     dev.off()

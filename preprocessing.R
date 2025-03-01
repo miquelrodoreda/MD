@@ -83,13 +83,14 @@ unique(dd$meals)
 
 dd <- dd %>%
   mutate(meals = case_when(
-    meals == "" ~ "NoAnswer",
-    str_detect(meals, "Breakfast") & str_detect(meals, "Lunch") & str_detect(meals, "Dinner") ~ "AllMeals",
-    str_detect(meals, "Breakfast") & str_detect(meals, "Lunch") ~ "BreakfastLunch",
-    str_detect(meals, "Lunch") & str_detect(meals, "Dinner") ~ "LunchDinner",
-    str_detect(meals, "Breakfast") & str_detect(meals, "Dinner") ~ "BreakfastDinner",
-    str_detect(meals, "Drinks") ~ "Drinks",
-    str_detect(meals, "Brunch") | str_detect(meals, "Snack") ~ "LightMeals",
+    meals == "" ~ "UNK",
+    str_detect(meals, "Breakfast") & str_detect(meals, "Lunch") & str_detect(meals, "Dinner") ~ "AM",
+    str_detect(meals, "Breakfast") & str_detect(meals, "Lunch") ~ "BL",
+    str_detect(meals, "Lunch") & str_detect(meals, "Dinner") ~ "LD",
+    str_detect(meals, "Breakfast") & str_detect(meals, "Dinner") ~ "BD",
+    str_detect(meals, "Breakfast") ~ "B",
+    str_detect(meals, "Lunch") ~ "L",
+    str_detect(meals, "Dinner") ~ "D",
     TRUE ~ "Others"
   ))
 
