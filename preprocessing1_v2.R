@@ -1,13 +1,13 @@
 # install.packages("RColorBrewer")
 library(RColorBrewer)
-#library(dplyr)
+library(dplyr)
 #install.packages("dplyr")
  #install.packages("stringi")
 library(stringr)
  #install.packages("VIM")
 library(VIM)
 
-#library(stringi)
+library(stringi)
 
 setwd("C:/Users/alejf/Desktop/UNI_END/MD/MD")
 
@@ -149,4 +149,4 @@ dd$awards[is.na(dd$awards)] <- "Not Awarded"
 
 # ------------------------------------- saving -------------------------------------
 
-write.table(dd, file = "dataset/preprocessing1.csv", sep = ";", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE)
+write.table(dd, file = "dataset/preprocessing2.csv", sep = ";", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE)
