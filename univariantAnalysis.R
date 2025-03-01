@@ -14,7 +14,7 @@ setwd("/Users/miquelrodoreda/uni/MD")
 
 # Read dataset
 filename <- "dataset/preprocessed.csv"
-base_output_dir <- "univariant_after/"
+plots_dir <- "univariant_after/"
 dd <- read.csv(filename)
 dd <- dd[, c("price_level", "vegan_options", "awards", "gluten_free", "cuisines", "original_location", "open_days_per_week", "avg_rating", "total_reviews_count", "food", "service", "atmosphere", "excellent", "meals")]
 
@@ -26,9 +26,6 @@ K <- ncol(dd)
 cat("Number of observations: ", n, "\n")
 cat("Number of variables: ", K, "\n")
 print(names(dd))
-
-# Define output directory for all plots
-plots_dir <- "univariant_before/plots"
 
 # Create the output directory if it doesn't exist
 if (!dir.exists(plots_dir)) {
