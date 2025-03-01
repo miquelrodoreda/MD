@@ -8,8 +8,8 @@ library(ggplot2)
 setwd("/Users/miquelrodoreda/uni/MD")
 
 # Read dataset
-filename <- "dataset/filtered_data.csv"
-base_output_dir <- "bivariant_before/"
+filename <- "dataset/preprocessed.csv"
+base_output_dir <- "bivariant_after/"
 dd <- read.csv(filename)
 dd <- dd[, c("price_level", "vegan_options", "awards", "gluten_free", "cuisines", "original_location", "open_days_per_week", "avg_rating", "total_reviews_count", "food", "service", "atmosphere", "excellent", "meals")]
 
@@ -50,7 +50,22 @@ for (i in seq_len(nrow(column_pairs))) {
       numeric_col <- col2
       categorical_col <- col1
     }
+
     valid_data <- dd[!is.na(dd[[col1]]) & !is.na(dd[[col2]]), ]
+    
+    print(paste0(col1, "-", col2))
+    summary_by_modality <- valid_data %>%
+      group_by(.data[[categorical_col]]) %>%
+      summarise(
+        count = n(),
+        mean = mean(.data[[numeric_col]], na.rm = TRUE),
+        median = median(.data[[numeric_col]], na.rm = TRUE),
+        sd = sd(.data[[numeric_col]], na.rm = TRUE),
+        min = min(.data[[numeric_col]], na.rm = TRUE),
+        max = max(.data[[numeric_col]], na.rm = TRUE)
+      )
+    print(summary_by_modality)
+    cat("\n")
 
     # Boxplot
     boxplot_file <- paste0(base_output_dir, "boxplots/boxplot_", col1, "_", col2, ".png")

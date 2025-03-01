@@ -50,6 +50,10 @@ plot_numeric <- function(data, var_name, out_dir, counter) {
     return()
   }
   
+  # Global summary
+  print(summary(data_var))
+  cat("\n")
+  
   # Dynamically determine bin width for the histogram
   bin_width <- (max(data_var) - min(data_var)) / 30
   
@@ -85,6 +89,9 @@ plot_categorical <- function(data, var_name, out_dir, counter) {
     cat("No available data for categorical variable:", var_name, "\n")
     return()
   }
+  
+  # Frequency table
+  print(table(data_var))
   
   # Create barplot
   p <- ggplot(data, aes_string(x = var_name)) +
