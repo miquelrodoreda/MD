@@ -9,7 +9,7 @@ library(VIM)
 
 library(stringi)
 
-setwd("C:/Users/alejf/Desktop/UNI_END/MD/MD")
+setwd("/Users/miquelrodoreda/uni/MD")
 
 filename <- "dataset/filtered_data.csv"
 file.exists(filename)
@@ -174,6 +174,14 @@ classify_cuisine <- function(cuisine) {
 
 # Aplicar la clasificación a la columna directamente
 dd$cuisines <- sapply(dd$cuisines, classify_cuisine)
+
+# ------------------------------------- open_days_per_week cleaning -------------------------------------
+
+unique(dd$open_days_per_week)
+
+dd$open_days_per_week[is.na(dd$open_days_per_week)] <- median(dd$open_days_per_week, na.rm=TRUE)
+
+unique(dd$open_days_per_week)
 
 # ------------------------------------- saving -------------------------------------
 
