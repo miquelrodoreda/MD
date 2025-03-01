@@ -2,16 +2,16 @@
 library(RColorBrewer)
 library(dplyr)
 #install.packages("dplyr")
- #install.packages("stringi")
+#install.packages("stringi")
 library(stringr)
- #install.packages("VIM")
+#install.packages("VIM")
 library(VIM)
 
 library(stringi)
 
-setwd("/home/carles/Descargas/")
+setwd("C:/Users/alejf/Desktop/UNI_END/MD/MD")
 
-filename <- "filtered_data.csv"
+filename <- "dataset/filtered_data.csv"
 file.exists(filename)
 dd <- read.csv(filename)
 dd <- dd[, c("price_level", "vegan_options", "awards", "gluten_free", "cuisines", "original_location", "open_days_per_week", "avg_rating", "total_reviews_count", "food", "service", "atmosphere", "excellent", "meals")]
@@ -177,4 +177,4 @@ dd$cuisines <- sapply(dd$cuisines, classify_cuisine)
 
 # ------------------------------------- saving -------------------------------------
 
-write.table(dd, file = "dataset/preprocessed.csv", sep = ";", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE)
+write.table(dd, file = "dataset/preprocessed.csv", sep = ",", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE)
