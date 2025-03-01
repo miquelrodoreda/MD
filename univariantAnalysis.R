@@ -13,7 +13,7 @@ library(readr)
 # setwd("/path/to/your/project/folder")
 
 # Read the dataset from cleaned.csv
-data_file <- "dataset/cleaned.csv"
+data_file <- "dataset/preprocessed.csv"
 dd <- read.table(data_file, header = TRUE, sep = ",", fill = TRUE)
 
 # Display a summary of the dataset
@@ -26,7 +26,7 @@ cat("Number of variables: ", K, "\n")
 print(names(dd))
 
 # Define output directory for all plots
-plots_dir <- "univariant/plots"
+plots_dir <- "univariant_after/plots"
 
 # Create the output directory if it doesn't exist
 if (!dir.exists(plots_dir)) {
