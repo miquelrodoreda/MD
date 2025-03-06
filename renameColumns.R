@@ -59,4 +59,26 @@ dd <- dd %>%
 
 unique(dd$awards)
 
+# ------------------------------------- cuisines name shortening -------------------------------------
+unique(dd$cuisines)
+
+dd <- dd %>%
+  mutate(cuisines = case_when(
+    cuisines == "European" ~ "EU",
+    cuisines == "Asian" ~ "AS",
+    cuisines == "Latin American" ~ "LA",
+    cuisines == "American" ~ "AM",
+    cuisines == "Healthy" ~ "HE",
+    cuisines == "Fusion / International" ~ "F/I",
+    cuisines == "Seafood / Fish" ~ "S/F",
+    cuisines == "Others" ~ "O",
+    TRUE ~ "UNK"
+  ))
+
+unique(dd$cuisines)
+
+# ------------------------------------- saving -------------------------------------
+
+write.table(dd, file = "dataset/renamed.csv", sep = ",", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE)
+head(dd)
 

@@ -167,9 +167,6 @@ classify_cuisine <- function(cuisine) {
   if (grepl("Fusion|International", cuisine, ignore.case = TRUE)) {
     return("Fusion / International")
   }
-  if (grepl("Seafood", cuisine, ignore.case = TRUE)) {
-    return("Seafood / Fish")
-  }
   return("Others")
 }
 
