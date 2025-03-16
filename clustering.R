@@ -1,208 +1,166 @@
-#Retrieve the data saved AFTER the profiling practice...... this means data already cleaned
+# Cambiar el directorio de trabajo
+setwd("/home/joan/Documents/Ricard/UPC/MD/MD")
 
-setwd("/home/joan/Documents/Ricard/UPC/MD")
-dd <- read.csv("dataset/renamed.csv");
+# Cargar los datos
+dd <- read.csv("dataset/renamed.csv")
 names(dd)
 dim(dd)
 summary(dd)
 
 attach(dd)
 
-#set a list of numerical variables
-names(dd)
+# Obtiene los nombres de las columnas numéricas
+num_cols <- names(dd)[sapply(dd, is.numeric)]
 
-dcon <- data.frame (Antiguedad.Trabajo,Plazo,Edad,Gastos,Ingresos,Patrimonio,Cargas.patrimoniales,Importe.solicitado,Precio.del.bien.financiado,Estalvi, RatiFin)
-dim(dcon)
+# Filtra solo las columnas numéricas
+dcon <- dd[, num_cols, drop = FALSE]  # drop=FALSE evita errores con una sola columna
+
+# Verifica que dcon tiene datos
+print(dim(dcon))
+
+# Muestra las variables utilizadas en el clustering
+print(paste("The clustering is going to be done for these numerical variables:", 
+            paste(names(dcon), collapse=", ")))
 
 #
 # CLUSTERING
 #
 
-
-
 # KMEANS RUN, BUT HOW MANY CLASSES?
-
-k1 <- kmeans(dcon,5)
+k1 <- kmeans(dcon, 5)
 names(dcon)
 print(k1)
 
 attributes(k1)
 
 k1$size
-
 k1$withinss
-
 k1$centers
 
-# LETS COMPUTE THE DECOMPOSITION OF INERTIA
-
-Bss <- sum(rowSums(k1$centers^2)*k1$size)
+# LET'S COMPUTE THE DECOMPOSITION OF INERTIA
+Bss <- sum(rowSums(k1$centers^2) * k1$size)
 Bss
 Wss <- sum(k1$withinss)
 Wss
 Tss <- k1$totss
 Tss
 
-Bss+Wss
+Bss + Wss
 
-Ib1 <- 100*Bss/(Bss+Wss)
+Ib1 <- 100 * Bss / (Bss + Wss)
 Ib1
 
-# LETS REPEAT THE KMEANS RUN WITH K=5
-
-k2 <- kmeans(dcon,5)
+# LET'S REPEAT THE KMEANS RUN WITH K=5
+k2 <- kmeans(dcon, 5)
 k2$size
 
-Bss <- sum(rowSums(k2$centers^2)*k2$size)
+Bss <- sum(rowSums(k2$centers^2) * k2$size)
 Bss
 Wss <- sum(k2$withinss)
 Wss
 
-Ib2 <- 100*Bss/(Bss+Wss)
+Ib2 <- 100 * Bss / (Bss + Wss)
 Ib2
 Ib1
 
 k2$centers
 k1$centers
 
-plot(k1$centers[,3],k1$centers[,2])
+# Guardar gráfico de los centros de los clusters
+if (!dir.exists("clustering")) {
+  dir.create("clustering")
+}
+png("clustering/kmeans_centers.png", width = 800, height = 600)
+plot(k1$centers[, 3], k1$centers[, 2], main="KMeans: Centers of Clusters")
+dev.off()
 
+# Compara los clusters
 table(k1$cluster, k2$cluster)
 
-# WHY WE HAVE OBTAINED DIFFERENT RESULTS?, AND WHICH RUN IS BETTER?
+# Gráfico de distancias jerárquicas
+png("clustering/hierarchical_clustering.png", width = 800, height = 600)
+d <- dist(dcon)
+h1 <- hclust(d, method="ward.D2")  # NOTICE THE COST
+plot(h1, main="Hierarchical Clustering")
+dev.off()
 
-# NOW TRY K=8
-
-k3 <- kmeans(dcon,8)
-k3$size
-
-Bss <- sum(rowSums(k3$centers^2)*k3$size)
-Wss <- sum(k3$withinss)
-
-Ib3 <- 100*Bss/(Bss+Wss)
-Ib3
-
-
-# HIERARCHICAL CLUSTERING
-
-d  <- dist(dcon[1:50,])
-h1 <- hclust(d,method="ward.D2")  # NOTICE THE COST
-plot(h1)
-
-d  <- dist(dcon)
-h1 <- hclust(d,method="ward.D2")  # NOTICE THE COST
-plot(h1)
-
-# BUT WE ONLY NEED WHERE THERE ARE THE LEAPS OF THE HEIGHT
-
-# WHERE ARE THER THE LEAPS? WHERE WILL YOU CUT THE DENDREOGRAM?, HOW MANY CLASSES WILL YOU OBTAIN?
-
+# Cortar el dendrograma y mostrar las clases
 nc = 3
-
-c1 <- cutree(h1,nc)
-
-c1[1:20]
+c1 <- cutree(h1, nc)
 
 nc = 5
+c5 <- cutree(h1, nc)
 
-c5 <- cutree(h1,nc)
+# Gráfico de partición por clases
+png("clustering/clustering_partition.png", width = 800, height = 600)
+plot(dcon$total_reviews_count, dcon$avg_rating, col=c1, main="Clustering: total_reviews_count vs avg_rating")
+legend("topright", c("class1", "class2", "class3"), pch=1, col=c(1:3), cex=0.6)
+dev.off()
 
-c5[1:20]
+# Boxplot de las variables
+png("clustering/boxplot_avg_rating.png", width = 800, height = 600)
+boxplot(dd[, 7] ~ c2, horizontal=TRUE, main="Boxplot: avg_rating by Clusters")
+dev.off()
 
+# Gráfico de clustering 2D
+png("clustering/clustering_2D.png", width = 800, height = 600)
+pairs(dcon[, 1:7], col=c1, main="Clustering: Pairwise Plot")
+dev.off()
 
-table(c1)
-table(c5)
-table(c1,c5)
+# Calidad de la partición jerárquica
+Bss <- sum(rowSums(cdg^2) * as.numeric(table(c1)))
 
-
-cdg <- aggregate(as.data.frame(dcon),list(c1),mean)
-cdg
-
-plot(cdg[,1], cdg[,7])
-
-# LETS SEE THE PARTITION VISUALLY
-
-
-plot(Edad,Estalvi,col=c1,main="Clustering of credit data in 3 classes")
-legend("topright",c("class1","class2","class3"),pch=1,col=c(1:3))
-
-
-
-plot(RatiFin,Estalvi)
-plot(RatiFin,Estalvi,col=c1,main="Clustering of credit data in 3 classes")
-legend("topright",c("class1","class2","class3"),pch=1,col=c(1:3), cex=0.6)
-
-plot(Antiguedad.Trabajo,Estalvi,col=c1,main="Clustering of credit data in 3 classes")
-legend("topright",c("class1","class2","class3"),pch=1,col=c(1:3), cex=0.6)
-plot(Patrimonio, Ingresos,col=c1,main="Clustering of credit data in 3 classes")
-legend("topright",c("class1","class2","class3"),pch=1,col=c(1:3), cex=0.6)
-plot(Patrimonio, Antiguedad.Trabajo,col=c1,main="Clustering of credit data in 3 classes")
-legend("topright",c("class1","class2","class3"),pch=1,col=c(1:3), cex=0.6)
-
-pairs(dcon[,1:7], col=c1)
-
-#plot(FI[,1],FI[,2],col=c1,main="Clustering of credit data in 3 classes")
-#legend("topleft",c("c1","c2","c3"),pch=1,col=c(1:3))
-
-# LETS SEE THE QUALITY OF THE HIERARCHICAL PARTITION
-
-
-
-Bss <- sum(rowSums(cdg^2)*as.numeric(table(c1)))
-
-Ib4 <- 100*Bss/Tss
+Ib4 <- 100 * Bss / Tss
 Ib4
 
-
-#move to Gower mixed distance to deal 
-#simoultaneously with numerical and qualitative data
-
+# Clustering con distancia Gower
 library(cluster)
 
-#dissimilarity matrix
+# Dissimilarity matrix
+actives <- c(1:14)
+dd[, sapply(dd, is.character)] <- lapply(dd[, sapply(dd, is.character)], as.factor)
+str(dd)
 
-actives<-c(2:16)
-dissimMatrix <- daisy(dd[,actives], metric = "gower", stand=TRUE) #falla pq falta el string as factor = true
+dissimMatrix <- daisy(dd[, actives], metric = "gower", stand=TRUE)
 
-distMatrix<-dissimMatrix^2
+distMatrix <- dissimMatrix^2
 
-h1 <- hclust(distMatrix,method="ward.D")  # NOTICE THE COST
-#versions noves "ward.D" i abans de plot: par(mar=rep(2,4)) si se quejara de los margenes del plot
+h1 <- hclust(distMatrix, method="ward.D")  # NOTICE THE COST
+png("clustering/gower_clustering.png", width = 800, height = 600)
+plot(h1, main="Gower Clustering")
+dev.off()
 
-plot(h1)
+c2 <- cutree(h1, 4)
 
-c2 <- cutree(h1,4)
+# Visualización de los clusters
+png("clustering/comparison_clusters.png", width = 800, height = 600)
+plot(avg_rating, total_reviews_count, col=c2, main="Clustering of data in 3 classes")
+legend("topright", levels(c2), pch=1, col=c(1:4), cex=0.6)
+dev.off()
 
-#class sizes 
-table(c2)
+# Gráfico de boxplot
+png("clustering/boxplot_open_days.png", width = 800, height = 600)
+boxplot(dd[, 6] ~ c2, horizontal=TRUE, main="Boxplot: open_days_per_week by Clusters")
+dev.off()
 
-#comparing with other partitions
-table(c1,c2)
+# Visualiza las variables categóricas con boxplots
+png("clustering/boxplot_total_reviews.png", width = 800, height = 600)
+boxplot(dd[, 9] ~ c2, horizontal=TRUE, main="Boxplot: total_reviews_count by Clusters")
+dev.off()
 
+# Comparación de particiones
+table(c1, c2)
 
-names(dd)
-#ratiFin
-boxplot(dd[,16]~c2, horizontal=TRUE)
+# Visualización de los perfiles
+cdg <- aggregate(as.data.frame(dcon), list(c2), mean)
+png("clustering/clustering_profile.png", width = 800, height = 600)
+plot(avg_rating, total_reviews_count, col=c2)
+points(cdg[, 4], cdg[, 5], pch=16, col="orange")
+text(cdg[, 4], cdg[, 5], labels=cdg[, 1], pos=2, font=2, cex=0.7, col="orange")
+dev.off()
 
-#plazo
-boxplot(dd[,4]~c2, horizontal=TRUE)
-
-#gastos
-boxplot(dd[,9]~c2, horizontal=TRUE)
-
-pairs(dcon[,1:7], col=c2)
-
-plot(RatiFin,Estalvi,col=c2,main="Clustering of credit data in 3 classes")
-legend("topright",levels(c2),pch=1,col=c(1:4), cex=0.6)
-
-cdg <- aggregate(as.data.frame(dcon),list(c2),mean)
-cdg
-
-plot(Edad, Gastos, col= c2)
-points(cdg[,4],cdg[,5],pch=16,col="orange")
-text(cdg[,4],cdg[,5], labels=cdg[,1], pos=2, font=2, cex=0.7, col="orange")
-
-potencials<-c(3,4,6,7,10,11)
-pairs(dcon[,potencials],col=c2)
-
-#Profiling plots
+# Graficar relaciones entre variables
+potencials <- c("open_days_per_week", "avg_rating", "food", "service")
+png("clustering/pairs_plot.png", width = 800, height = 600)
+pairs(dcon[, potencials], col=c2)
+dev.off()
