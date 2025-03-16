@@ -135,7 +135,7 @@ c2 <- cutree(h1, 4)
 # Visualización de los clusters
 png("clustering/comparison_clusters.png", width = 800, height = 600)
 plot(avg_rating, total_reviews_count, col=c2, main="Clustering of data in 3 classes")
-legend("topright", levels(c2), pch=1, col=c(1:4), cex=0.6)
+legend("topright", legend = unique(c2), pch = 1, col = c(1:4), cex = 0.6)
 dev.off()
 
 # Gráfico de boxplot
