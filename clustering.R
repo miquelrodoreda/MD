@@ -153,7 +153,7 @@ table(c1, c2)
 
 # Visualización de los perfiles
 cdg <- aggregate(as.data.frame(dcon), list(c2), mean)
-png("clustering/clustering_profile.png", width = 800, height = 600)
+png("clustering/clustering_profile.png", width = 800, height = 600) #Identical to comparison_clusters.png
 plot(avg_rating, total_reviews_count, col=c2)
 points(cdg[, 4], cdg[, 5], pch=16, col="orange")
 text(cdg[, 4], cdg[, 5], labels=cdg[, 1], pos=2, font=2, cex=0.7, col="orange")
