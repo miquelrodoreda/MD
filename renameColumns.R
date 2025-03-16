@@ -8,7 +8,7 @@ library(stringr)
 library(VIM)
 library(stringi)
 
-setwd("/Users/miquelrodoreda/uni/MD")
+setwd("C:/Users/alejf/Desktop/UNI_END/MD/MD")
 
 filename <- "dataset/preprocessed.csv"
 file.exists(filename)
@@ -53,7 +53,7 @@ dd <- dd %>%
     awards == "Certificate of Excellence 2018" ~ "CoE18",
     awards == "Certificate of Excellence 2019" ~ "CoE19",
     awards == "Certificate of Excellence 2020" ~ "CoE20",
-    awards == "Not Awarded" ~ "NA",
+    awards == "Not Awarded" ~ "NotAw",
     TRUE ~ "UNK"
   ))
 

@@ -1,13 +1,11 @@
 # Cambiar el directorio de trabajo
-setwd("/home/joan/Documents/Ricard/UPC/MD/MD")
+setwd("C:/Users/alejf/Desktop/UNI_END/MD/MD")
 
 # Cargar los datos
 dd <- read.csv("dataset/renamed.csv")
 names(dd)
 dim(dd)
 summary(dd)
-
-attach(dd)
 
 # Obtiene los nombres de las columnas numéricas
 num_cols <- names(dd)[sapply(dd, is.numeric)]
