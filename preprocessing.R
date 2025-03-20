@@ -1,26 +1,47 @@
-# install.packages("RColorBrewer")
-library(RColorBrewer)
-#install.packages("dplyr")
-library(dplyr)
-#install.packages("stringi")
-library(stringr)
-#install.packages("VIM")
-library(VIM)
+# ==============================
+# DATA PREPROCESSING SCRIPT
+# ==============================
+# This script performs data preprocessing on the filtered dataset, including:
+# - Cleaning and standardizing text fields
+# - Handling missing values
+# - Recoding categorical variables
+# - Classifying cuisines
+# - Imputing missing values using kNN
 
+# ==============================
+# LIBRARIES
+# ==============================
+
+# Load required libraries
+library(RColorBrewer)
+library(dplyr)
+library(stringr)
+library(VIM)
 library(stringi)
 
+# ==============================
+# WORKING DIRECTORY & DATA LOADING
+# ==============================
+
+# Set working directory
 setwd("/Users/miquelrodoreda/uni/MD")
 
+# Load dataset
 filename <- "dataset/filtered_data.csv"
 file.exists(filename)
 dd <- read.csv(filename)
-dd <- dd[, c("price_level", "vegan_options", "awards", "gluten_free", "cuisines", "original_location", "open_days_per_week", "avg_rating", "total_reviews_count", "food", "service", "atmosphere", "excellent", "meals")]
 
-barplot(table(dd$original_location))
+# Select relevant columns
+dd <- dd[, c("price_level", "vegan_options", "awards", "gluten_free", 
+             "cuisines", "original_location", "open_days_per_week", 
+             "avg_rating", "total_reviews_count", "food", "service", 
+             "atmosphere", "excellent", "meals")]
 
-# ------------------------------------- original_location cleaning -------------------------------------
-unique(dd$original_location)
+# ==============================
+# TEXT CLEANING FUNCTIONS
+# ==============================
 
+# Function to clean and standardize text
 clean_text <- function(text) {
   text %>%
     str_replace_all('""', '') %>%
@@ -33,51 +54,62 @@ clean_text <- function(text) {
     str_to_lower()
 }
 
+# ==============================
+# LOCATION CLEANING
+# ==============================
+
+# Display initial location distribution
+barplot(table(dd$original_location))
+unique(dd$original_location)
+
+# Extract municipality from location
 dd <- dd %>%
   mutate(municipi = str_extract(original_location, "[^,]+(?=\\]$)") %>%
            clean_text())
 print(dd$municipi)
 
+# Load and process comarcas data
 municipis_comarques <- read.csv("dataset/comarcas.csv")
-
 municipis_comarques <- municipis_comarques %>%
   mutate(Nom.del.municipi = stri_trans_general(Nom.del.municipi, id = "Latin-ASCII") %>%
          clean_text())
 
-municipis_comarques$Nom.del.municipi
-
+# Join with comarcas data
 dd <- dd %>%
   left_join(municipis_comarques, by = c("municipi" = "Nom.del.municipi")) %>%
   mutate(Nom.de.la.comarca = ifelse(is.na(Nom.de.la.comarca), "NotFound", Nom.de.la.comarca))
 
+# Check results
 table(dd$Nom.de.la.comarca)
-
 dd$original_location[dd$Nom.de.la.comarca == "NotFound"]
 dd$municipi[dd$Nom.de.la.comarca == "NotFound"]
 
-dd <- dd[, c("price_level", "vegan_options", "awards", "gluten_free", "cuisines", "Nom.de.la.comarca", "open_days_per_week", "avg_rating", "total_reviews_count", "food", "service", "atmosphere", "excellent", "meals")]
+# Select and rename columns
+dd <- dd[, c("price_level", "vegan_options", "awards", "gluten_free", 
+             "cuisines", "Nom.de.la.comarca", "open_days_per_week", 
+             "avg_rating", "total_reviews_count", "food", "service", 
+             "atmosphere", "excellent", "meals")]
 
 dd <- dd %>%
   rename(original_location = Nom.de.la.comarca)
 
-print(dd$original_location)
-
-unique(dd$original_location)
-
-# ------------------------------------- price_level cleaning -------------------------------------
+# ==============================
+# PRICE LEVEL CLEANING
+# ==============================
 
 unique(dd$price_level)
 dd <- dd %>%
   mutate(price_level = recode(price_level, 
-                              "€" = "low", 
-                              "€€-€€€" = "medium", 
-                              "€€€€" = "high"))
+                             "€" = "low", 
+                             "€€-€€€" = "medium", 
+                             "€€€€" = "high"))
 unique(dd$price_level)
 
-# ------------------------------------- meals cleaning -------------------------------------
+# ==============================
+# MEALS CLEANING
+# ==============================
 
 unique(dd$meals)
-
 dd <- dd %>%
   mutate(meals = case_when(
     meals == "" ~ "UNK",
@@ -90,62 +122,53 @@ dd <- dd %>%
     str_detect(meals, "Dinner") ~ "D",
     TRUE ~ "Others"
   ))
-
 unique(dd$meals)
 
-# ------------------------------------- service cleaning -------------------------------------
+# ==============================
+# MISSING VALUES HANDLING
+# ==============================
 
+# Service rating
+unique(dd$service)
+dd$service[is.na(dd$service)] <- median(dd$service, na.rm = TRUE)
 unique(dd$service)
 
-dd$service[is.na(dd$service)] <- median(dd$service, na.rm=TRUE)
-
-unique(dd$service)
-
-# ------------------------------------- food cleaning -------------------------------------
-
+# Food rating
+unique(dd$food)
+dd$food[is.na(dd$food)] <- median(dd$food, na.rm = TRUE)
 unique(dd$food)
 
-dd$food[is.na(dd$food)] <- median(dd$food, na.rm=TRUE)
-
-unique(dd$food)
-
-# ------------------------------------- atmosphere cleaning -------------------------------------
-
+# Atmosphere rating
 unique(dd$atmosphere)
-
 numerics <- unlist(lapply(dd, is.numeric), use.names = FALSE)
 cor(dd[!is.na(dd$atmosphere), numerics])
-
 var(dd$atmosphere, na.rm = TRUE)
 
-# for (k_value in c(2, 3, 5, 10)) { 
-#   dd_imputed <- kNN(dd, variable = "atmosphere", k = k_value, dist_var = c("service", "food", "avg_rating"), imp_var = TRUE) 
-#   print(paste("k =", k_value, " - atmosphere variance:", var(dd_imputed$atmosphere, na.rm = TRUE))) 
-# }
-
-dd <- kNN(dd, variable = "atmosphere", k = 3, dist_var = c("service", "food", "avg_rating"), imp_var = FALSE)
-
-
+# Impute atmosphere using kNN
+dd <- kNN(dd, 
+          variable = "atmosphere", 
+          k = 3, 
+          dist_var = c("service", "food", "avg_rating"), 
+          imp_var = FALSE)
 unique(dd$atmosphere)
 
-
-# ------------------------------------- awards -------------------------------------
+# ==============================
+# AWARDS CLEANING
+# ==============================
 
 unique(dd$awards)
-
-
-
 dd <- dd %>%
   mutate(awards = str_extract(awards, "Certificate of Excellence \\d{4}"))
-
-
 unique(dd$awards)
-
 dd$awards[is.na(dd$awards)] <- "Not Awarded"
 
-# ------------------------------------- cuisines -------------------------------------
+# ==============================
+# CUISINE CLASSIFICATION
+# ==============================
+
 unique(dd$cuisines)
 
+# Function to classify cuisines
 classify_cuisine <- function(cuisine) {
   if (grepl("Mediterranean|Spanish|Catalan|Italian|French|German|Polish|Portuguese|British|Neapolitan|Sicilian|Tuscan|Belgian|Northern-Italian|Central European|Russian|Swiss|Hungarian|Dutch", cuisine, ignore.case = TRUE)) {
     return("European")
@@ -168,19 +191,26 @@ classify_cuisine <- function(cuisine) {
   return("Others")
 }
 
-# Aplicar la clasificación a la columna directamente
+# Apply cuisine classification
 dd$cuisines <- sapply(dd$cuisines, classify_cuisine)
-
 unique(dd$cuisines)
 
-# ------------------------------------- open_days_per_week cleaning -------------------------------------
+# ==============================
+# OPENING DAYS CLEANING
+# ==============================
 
 unique(dd$open_days_per_week)
-
-dd$open_days_per_week[is.na(dd$open_days_per_week)] <- median(dd$open_days_per_week, na.rm=TRUE)
-
+dd$open_days_per_week[is.na(dd$open_days_per_week)] <- median(dd$open_days_per_week, na.rm = TRUE)
 unique(dd$open_days_per_week)
 
-# ------------------------------------- saving -------------------------------------
+# ==============================
+# SAVE PREPROCESSED DATA
+# ==============================
 
-write.table(dd, file = "dataset/preprocessed.csv", sep = ",", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE)
+write.table(dd, 
+            file = "dataset/preprocessed.csv", 
+            sep = ",", 
+            na = "NA", 
+            dec = ".", 
+            row.names = FALSE, 
+            col.names = TRUE)

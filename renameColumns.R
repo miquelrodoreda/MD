@@ -1,20 +1,36 @@
-# install.packages("RColorBrewer")
+# ==============================
+# COLUMN RENAMING SCRIPT
+# ==============================
+# This script shortens the names of categorical variables in the preprocessed dataset
+# to make them more concise and easier to work with in visualizations.
+
+# ==============================
+# LIBRARIES
+# ==============================
+
+# Load required libraries
 library(RColorBrewer)
-#install.packages("dplyr")
 library(dplyr)
-#install.packages("stringi")
 library(stringr)
-#install.packages("VIM")
 library(VIM)
 library(stringi)
 
+# ==============================
+# WORKING DIRECTORY & DATA LOADING
+# ==============================
+
+# Set working directory
 setwd("/Users/miquelrodoreda/uni/MD")
 
+# Load dataset
 filename <- "dataset/preprocessed.csv"
 file.exists(filename)
 dd <- read.csv(filename)
 
-# ------------------------------------- original_location name shortening -------------------------------------
+# ==============================
+# LOCATION NAME SHORTENING
+# ==============================
+
 unique(dd$original_location)
 
 dd <- dd %>%
@@ -23,7 +39,7 @@ dd <- dd %>%
     original_location == "Maresme" ~ "Mar",
     original_location == "NotFound" ~ "NF",
     original_location == "Osona" ~ "Os",
-    original_location == "Vallès Oriental"   ~ "VOr",
+    original_location == "Vallès Oriental" ~ "VOr",
     original_location == "Berguedà" ~ "Ber",
     original_location == "Bages" ~ "Bag",
     original_location == "Alt Penedès" ~ "APe",
@@ -38,7 +54,10 @@ dd <- dd %>%
 
 unique(dd$original_location)
 
-# ------------------------------------- awards name shortening -------------------------------------
+# ==============================
+# AWARDS NAME SHORTENING
+# ==============================
+
 unique(dd$awards)
 
 dd <- dd %>%
@@ -59,7 +78,10 @@ dd <- dd %>%
 
 unique(dd$awards)
 
-# ------------------------------------- cuisines name shortening -------------------------------------
+# ==============================
+# CUISINES NAME SHORTENING
+# ==============================
+
 unique(dd$cuisines)
 
 dd <- dd %>%
@@ -76,8 +98,18 @@ dd <- dd %>%
 
 unique(dd$cuisines)
 
-# ------------------------------------- saving -------------------------------------
+# ==============================
+# SAVE RENAMED DATA
+# ==============================
 
-write.table(dd, file = "dataset/renamed.csv", sep = ",", na = "NA", dec = ".", row.names = FALSE, col.names = TRUE)
+write.table(dd, 
+            file = "dataset/renamed.csv", 
+            sep = ",", 
+            na = "NA", 
+            dec = ".", 
+            row.names = FALSE, 
+            col.names = TRUE)
+
+# Display first few rows of the final dataset
 head(dd)
 
