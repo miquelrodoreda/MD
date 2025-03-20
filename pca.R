@@ -119,7 +119,7 @@ axis(side = 3, pos = 0, labels = FALSE)
 axis(side = 2, pos = 0, labels = FALSE)
 axis(side = 4, pos = 0, labels = FALSE)
 arrows(ze, ze, X, Y, length = 0.07, col = "blue")
-text(X, Y, labels = etiq, col = "darkblue", cex = 0.7)
+text(X, Y, labels = numericals_names, col = "darkblue", cex = 0.7)
 dev.off()
 
 # Plot factorial plane with both numerical and categorical variables
@@ -134,7 +134,7 @@ axis(side = 3, pos = 0, labels = FALSE, col = "cyan")
 axis(side = 2, pos = 0, labels = FALSE, col = "cyan")
 axis(side = 4, pos = 0, labels = FALSE, col = "cyan")
 arrows(ze, ze, X, Y, length = 0.07, col = "lightgray")
-text(X, Y, labels = etiq, col = "gray", cex = 0.7)
+text(X, Y, labels = numericals_names, col = "gray", cex = 0.7)
 
 # Add categorical variables
 c <- 1
@@ -181,7 +181,7 @@ generate_factorial_plane <- function(group_num, categories_names, xlim_vals, yli
   
   # Add numerical variables
   arrows(ze, ze, X, Y, length = 0.07, col = "lightgray")
-  text(X, Y, labels = etiq, col = "gray", cex = 0.7)
+  text(X, Y, labels = numericals_names, col = "gray", cex = 0.7)
   
   # Add categorical variables
   c <- 1
@@ -219,3 +219,4 @@ generate_factorial_plane(2, categories_names, c(-1, 1.5), c(-2, 1))
 # Group 3: Meals and awards
 categories_names <- c("meals", "awards")
 generate_factorial_plane(3, categories_names, c(-3.5, 1.5), c(-2, 1))
+
