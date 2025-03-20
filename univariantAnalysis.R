@@ -1,8 +1,7 @@
 # UnivariantAnalysis.R
-# This script performs univariate analysis on the dataset contained in "cleaned.csv".
+# This script performs an univariate analysis on the dataset both before and after preprocessing.
 # For each numeric variable, it generates a histogram and a boxplot.
 # For each categorical variable, it generates a barplot.
-# All plots are saved in the "univariant/plots" folder.
 
 # Load required libraries
 library(ggplot2)
@@ -13,8 +12,8 @@ library(readr)
 setwd("/Users/miquelrodoreda/uni/MD")
 
 # Read dataset
-filename <- "dataset/preprocessed.csv"
-plots_dir <- "univariant_after/"
+filename <- "dataset/preprocessed.csv" # Change to "dataset/filtered_data.csv" for the before preprocessing
+plots_dir <- "univariant_after/"       # Change to "univariant_before/" for the before preprocessing
 dd <- read.csv(filename)
 dd <- dd[, c("price_level", "vegan_options", "awards", "gluten_free", "cuisines", "original_location", "open_days_per_week", "avg_rating", "total_reviews_count", "food", "service", "atmosphere", "excellent", "meals")]
 
@@ -42,7 +41,6 @@ cat("Categorical variables: ", paste(categorical_vars, collapse = ", "), "\n")
 # Function to generate and save histogram and boxplot for numeric variables
 plot_numeric <- function(data, var_name, out_dir) {
   data_var <- data[[var_name]]
-  # Remove NA values
   data_var <- data_var[!is.na(data_var)]
   if (length(data_var) == 0) {
     cat("No available data for numeric variable:", var_name, "\n")

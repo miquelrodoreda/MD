@@ -1,7 +1,7 @@
 # install.packages("RColorBrewer")
 library(RColorBrewer)
-library(dplyr)
 #install.packages("dplyr")
+library(dplyr)
 #install.packages("stringi")
 library(stringr)
 #install.packages("VIM")
@@ -21,31 +21,28 @@ barplot(table(dd$original_location))
 # ------------------------------------- original_location cleaning -------------------------------------
 unique(dd$original_location)
 
+clean_text <- function(text) {
+  text %>%
+    str_replace_all('""', '') %>%
+    str_remove_all('"') %>%
+    str_remove_all('\'') %>%
+    str_remove_all(' ') %>%
+    str_remove_all('-') %>%
+    str_trim() %>%
+    stri_trans_general(id = "Latin-ASCII") %>%
+    str_to_lower()
+}
+
 dd <- dd %>%
   mutate(municipi = str_extract(original_location, "[^,]+(?=\\]$)") %>%
-           str_replace_all('""', '') %>%
-           str_remove_all('"') %>%
-           str_remove_all('\'') %>%
-           str_remove_all(' ') %>%
-           str_remove_all('-') %>%
-           #str_remove_all('\\') %>%
-           str_trim() %>%
-           stri_trans_general(id = "Latin-ASCII") %>%
-           str_to_lower())
+           clean_text())
 print(dd$municipi)
 
 municipis_comarques <- read.csv("dataset/comarcas.csv")
 
-municipis_comarques$Nom.del.municipi <- stri_trans_general(str = municipis_comarques$Nom.del.municipi, id = "Latin-ASCII")
 municipis_comarques <- municipis_comarques %>%
-  mutate(Nom.del.municipi = str_replace_all(Nom.del.municipi, '""', '') %>%
-           str_remove_all('"') %>%
-           str_remove_all('\'') %>%
-           str_remove_all(' ') %>%
-           str_remove_all('-') %>%
-           str_trim() %>%
-           stri_trans_general(id = "Latin-ASCII") %>%
-           str_to_lower())
+  mutate(Nom.del.municipi = stri_trans_general(Nom.del.municipi, id = "Latin-ASCII") %>%
+         clean_text())
 
 municipis_comarques$Nom.del.municipi
 
@@ -121,10 +118,10 @@ cor(dd[!is.na(dd$atmosphere), numerics])
 
 var(dd$atmosphere, na.rm = TRUE)
 
-for (k_value in c(2, 3, 5, 10)) { 
-  dd_imputed <- kNN(dd, variable = "atmosphere", k = k_value, dist_var = c("service", "food", "avg_rating"), imp_var = TRUE) 
-  print(paste("k =", k_value, " - atmosphere variance:", var(dd_imputed$atmosphere, na.rm = TRUE))) 
-}
+# for (k_value in c(2, 3, 5, 10)) { 
+#   dd_imputed <- kNN(dd, variable = "atmosphere", k = k_value, dist_var = c("service", "food", "avg_rating"), imp_var = TRUE) 
+#   print(paste("k =", k_value, " - atmosphere variance:", var(dd_imputed$atmosphere, na.rm = TRUE))) 
+# }
 
 dd <- kNN(dd, variable = "atmosphere", k = 3, dist_var = c("service", "food", "avg_rating"), imp_var = FALSE)
 
@@ -147,6 +144,7 @@ unique(dd$awards)
 dd$awards[is.na(dd$awards)] <- "Not Awarded"
 
 # ------------------------------------- cuisines -------------------------------------
+unique(dd$cuisines)
 
 classify_cuisine <- function(cuisine) {
   if (grepl("Mediterranean|Spanish|Catalan|Italian|French|German|Polish|Portuguese|British|Neapolitan|Sicilian|Tuscan|Belgian|Northern-Italian|Central European|Russian|Swiss|Hungarian|Dutch", cuisine, ignore.case = TRUE)) {
@@ -172,6 +170,8 @@ classify_cuisine <- function(cuisine) {
 
 # Aplicar la clasificación a la columna directamente
 dd$cuisines <- sapply(dd$cuisines, classify_cuisine)
+
+unique(dd$cuisines)
 
 # ------------------------------------- open_days_per_week cleaning -------------------------------------
 

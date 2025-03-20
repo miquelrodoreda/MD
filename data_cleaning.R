@@ -1,15 +1,8 @@
-setwd("/home/gerard/Desktop/MD")
+setwd("/Users/miquelrodoreda/uni/MD")
 
-data <- read.csv("data/tripadvisor_european_restaurants.csv")
+data <- read.csv("dataset/tripadvisor_european_restaurants.csv")
 
-filtered_data <- data[data$city == "Madrid", ]
+filtered_data <- data[data$province == "Province of Barcelona" & data$total_reviews_count > 100, ]
 
-filter_review_count_data <- filtered_data[filtered_data$total_reviews_count > 200, ]
+dim(filtered_data)
 
-spanish_cuisine_data <- filtered_data[grepl("Spanish", filtered_data$cuisines, ignore.case = TRUE), ]
-
-spanish_exclusive_cuisine_data <- filtered_data[filtered_data$cuisines == "Spanish", ]
-
-mediterranean_exclusive_cuisine_data <- filtered_data[filtered_data$cuisines == "Mediterranean", ]
-
-barcelona <- data[data$city == "Barcelona", ]

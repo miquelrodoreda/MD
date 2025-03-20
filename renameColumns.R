@@ -8,7 +8,7 @@ library(stringr)
 library(VIM)
 library(stringi)
 
-setwd("C:/Users/alejf/Desktop/UNI_END/MD/MD")
+setwd("/Users/miquelrodoreda/uni/MD")
 
 filename <- "dataset/preprocessed.csv"
 file.exists(filename)
@@ -70,7 +70,6 @@ dd <- dd %>%
     cuisines == "American" ~ "AM",
     cuisines == "Healthy" ~ "HE",
     cuisines == "Fusion / International" ~ "F/I",
-    cuisines == "Seafood / Fish" ~ "S/F",
     cuisines == "Others" ~ "O",
     TRUE ~ "UNK"
   ))
