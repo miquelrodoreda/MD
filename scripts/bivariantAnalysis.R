@@ -15,7 +15,6 @@ library(psych)
 library(RColorBrewer)
 library(ggplot2)
 library(dplyr)
-library(tidyr)
 
 # ==============================
 # WORKING DIRECTORY & DATA LOADING

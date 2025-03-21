@@ -5,15 +5,6 @@
 # to reduce dimensionality and identify key components.
 
 # ==============================
-# LIBRARIES
-# ==============================
-
-# Load required libraries
-library(factoextra)
-library(dplyr)
-library(tidyr)
-
-# ==============================
 # WORKING DIRECTORY & DATA LOADING
 # ==============================
 

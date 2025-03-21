@@ -10,8 +10,6 @@
 
 # Load required libraries
 library(cluster)
-library(factoextra)
-library(dplyr)
 
 # ==============================
 # WORKING DIRECTORY & DATA LOADING

@@ -5,14 +5,6 @@
 # including handling missing values and standardizing variables.
 
 # ==============================
-# LIBRARIES
-# ==============================
-
-# Load required libraries
-library(dplyr)
-library(tidyr)
-
-# ==============================
 # WORKING DIRECTORY & DATA LOADING
 # ==============================
 

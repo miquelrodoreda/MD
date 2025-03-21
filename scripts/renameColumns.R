@@ -9,11 +9,7 @@
 # ==============================
 
 # Load required libraries
-library(RColorBrewer)
 library(dplyr)
-library(stringr)
-library(VIM)
-library(stringi)
 
 # ==============================
 # WORKING DIRECTORY & DATA LOADING
