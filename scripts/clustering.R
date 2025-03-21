@@ -1,9 +1,8 @@
 # ==============================
 # CLUSTERING ANALYSIS SCRIPT
 # ==============================
-# This script performs clustering analysis on the dataset using both K-means and
-# hierarchical clustering methods. It includes visualization of clusters and
-# analysis of clustering quality.
+# This script performs clustering analysis on the dataset to identify
+# natural groupings of restaurants based on their characteristics.
 
 # ==============================
 # LIBRARIES
@@ -11,6 +10,8 @@
 
 # Load required libraries
 library(cluster)
+library(factoextra)
+library(dplyr)
 
 # ==============================
 # WORKING DIRECTORY & DATA LOADING

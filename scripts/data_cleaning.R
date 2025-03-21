@@ -1,8 +1,16 @@
 # ==============================
 # DATA CLEANING SCRIPT
 # ==============================
-# This script performs initial data cleaning on the TripAdvisor dataset,
-# filtering restaurants in the Province of Barcelona with more than 100 reviews.
+# This script contains functions for cleaning and preparing the dataset,
+# including handling missing values and standardizing variables.
+
+# ==============================
+# LIBRARIES
+# ==============================
+
+# Load required libraries
+library(dplyr)
+library(tidyr)
 
 # ==============================
 # WORKING DIRECTORY & DATA LOADING

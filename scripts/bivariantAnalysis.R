@@ -1,4 +1,11 @@
 # ==============================
+# BIVARIATE ANALYSIS SCRIPT
+# ==============================
+# This script performs bivariate analysis on the dataset, exploring
+# relationships between pairs of variables using various visualization
+# techniques.
+
+# ==============================
 # LIBRARIES
 # ==============================
 
@@ -7,6 +14,8 @@
 library(psych)
 library(RColorBrewer)
 library(ggplot2)
+library(dplyr)
+library(tidyr)
 
 # ==============================
 # WORKING DIRECTORY & DATA LOADING

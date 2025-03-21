@@ -1,9 +1,17 @@
 # ==============================
 # PRINCIPAL COMPONENT ANALYSIS SCRIPT
 # ==============================
-# This script performs Principal Component Analysis (PCA) on the numerical variables
-# of the dataset, including visualization of variance explained, individuals,
-# and factorial planes with both numerical and categorical variables.
+# This script performs Principal Component Analysis (PCA) on the dataset
+# to reduce dimensionality and identify key components.
+
+# ==============================
+# LIBRARIES
+# ==============================
+
+# Load required libraries
+library(factoextra)
+library(dplyr)
+library(tidyr)
 
 # ==============================
 # WORKING DIRECTORY & DATA LOADING

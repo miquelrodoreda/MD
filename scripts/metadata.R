@@ -1,3 +1,12 @@
+# ==============================
+# METADATA MANAGEMENT SCRIPT
+# ==============================
+# This script manages metadata information for the project, including
+# variable descriptions and data dictionaries.
+
+# ==============================
+# WORKING DIRECTORY & DATA LOADING
+# ==============================
 setwd("/Users/miquelrodoreda/uni/MD")
 
 library(codebookr)
@@ -10,6 +19,10 @@ if (!dir.exists(directory)) {
 
 before <- read.csv("dataset/filtered_data.csv")
 after <- read.csv("dataset/renamed.csv")
+
+# ==============================
+# CODEBOOK GENERATION
+# ==============================
 
 glimpse(before)
 glimpse(after)

@@ -1,12 +1,9 @@
 # ==============================
 # DATA PREPROCESSING SCRIPT
 # ==============================
-# This script performs data preprocessing on the filtered dataset, including:
-# - Cleaning and standardizing text fields
-# - Handling missing values
-# - Recoding categorical variables
-# - Classifying cuisines
-# - Imputing missing values using kNN
+# This script handles the preprocessing of the restaurant dataset,
+# including handling missing values, standardizing variables, and
+# preparing the data for analysis.
 
 # ==============================
 # LIBRARIES

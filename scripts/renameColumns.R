@@ -1,8 +1,8 @@
 # ==============================
 # COLUMN RENAMING SCRIPT
 # ==============================
-# This script shortens the names of categorical variables in the preprocessed dataset
-# to make them more concise and easier to work with in visualizations.
+# This script standardizes column names in the dataset by shortening
+# location names, awards, and cuisines for better readability and analysis.
 
 # ==============================
 # LIBRARIES
