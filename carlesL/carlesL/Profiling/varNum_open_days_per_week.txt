@@ -1,0 +1,8 @@
+[1] "Anàlisi per classes de la Variable: open_days_per_week"
+RStudioGD 
+        2 
+RStudioGD 
+        2 
+RStudioGD 
+        2 
+[1] "Variable vegan_options"

@@ -1,0 +1,46 @@
+[1] "Variable cortes"
+[1] "Categories = " "1"             "2"             "3"            
+[1] "Condicionadas a clases:\n"
+[1] "Categories = " "1"             "2"             "3"            
+[1] "Categories = " "1"             "2"             "3"            
+[1] "Cross Table:"
+   P
+       1    2    3
+  1 2149    0    0
+  2    0 1462    0
+  3    0    0  388
+[1] "Distribucions condicionades a columnes:"
+   
+P   1 2 3
+  1 1 0 0
+  2 0 1 0
+  3 0 0 1
+[1] "Test Chi quadrat: "
+
+	Pearson's Chi-squared test
+
+data:  dades[, k] and as.factor(P)
+X-squared = 7998, df = 4, p-value < 2.2e-16
+
+[1] "valorsTest:"
+$rowpf
+   Xquali
+P   1 2 3
+  1 1 0 0
+  2 0 1 0
+  3 0 0 1
+
+$vtest
+   Xquali
+P           1         2         3
+  1  63.23765 -51.73941 -22.34139
+  2 -51.73941  63.23765 -15.73589
+  3 -22.34139 -15.73589  63.23765
+
+$pval
+   Xquali
+P   1 2 3
+  1 0 0 0
+  2 0 0 0
+  3 0 0 0
+

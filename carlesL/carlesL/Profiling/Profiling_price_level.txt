@@ -1,0 +1,46 @@
+[1] "Variable price_level"
+[1] "Categories = " "high"          "low"           "medium"       
+[1] "Condicionadas a clases:\n"
+[1] "Categories = " "high"          "low"           "medium"       
+[1] "Categories = " "high"          "low"           "medium"       
+[1] "Cross Table:"
+        P
+            1    2    3
+  high    171   37   22
+  low      72  138  347
+  medium 1906 1287   19
+[1] "Distribucions condicionades a columnes:"
+   
+P          high         low      medium
+  1 0.743478261 0.129263914 0.593399751
+  2 0.160869565 0.247755835 0.400684932
+  3 0.095652174 0.622980251 0.005915318
+[1] "Test Chi quadrat: "
+
+	Pearson's Chi-squared test
+
+data:  dades[, k] and as.factor(P)
+X-squared = 2130.8, df = 4, p-value < 2.2e-16
+
+[1] "valorsTest:"
+$rowpf
+   Xquali
+P         high        low     medium
+  1 0.07957189 0.03350396 0.88692415
+  2 0.02530780 0.09439124 0.88030096
+  3 0.05670103 0.89432990 0.04896907
+
+$vtest
+   Xquali
+P           high          low       medium
+  1   6.45712290 -20.82253193  14.35261104
+  2  -6.64061338  -6.22431742   9.30937852
+  3  -0.07241499  45.20318891 -39.32410872
+
+$pval
+   Xquali
+P           high          low       medium
+  1 5.335612e-11 0.000000e+00 5.130023e-47
+  2 1.561906e-11 2.418286e-10 6.429125e-21
+  3 4.711358e-01 0.000000e+00 0.000000e+00
+

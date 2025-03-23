@@ -1,0 +1,12 @@
+[1] "Anàlisi per classes de la Variable: total_reviews_count"
+[1] "Estadístics per groups:"
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  101.0   171.0   288.0   472.8   535.0  6977.0 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  101.0   129.0   174.0   328.2   283.0 12635.0 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  101.0   133.0   210.0   345.6   387.0  2724.0 
+[1] "p-valueANOVA: 1.54834273979569e-13"
+[1] "p-value Kruskal-Wallis: 1.00962733423841e-63"
+[1] "p-values ValorsTest: "
+[1] 4.457205e-14 7.745959e-11 1.529628e-02

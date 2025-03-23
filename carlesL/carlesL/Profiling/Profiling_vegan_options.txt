@@ -1,0 +1,45 @@
+[1] "Variable vegan_options"
+[1] "Categories = " "N"             "Y"            
+[1] "Condicionadas a clases:\n"
+[1] "Categories = " "N"             "Y"            
+[1] "Categories = " "N"             "Y"            
+[1] "Cross Table:"
+   P
+       1    2    3
+  N  542 1440  220
+  Y 1607   22  168
+[1] "Distribucions condicionades a columnes:"
+   
+P            N          Y
+  1 0.24613987 0.89426822
+  2 0.65395095 0.01224263
+  3 0.09990917 0.09348915
+[1] "Test Chi quadrat: "
+
+	Pearson's Chi-squared test
+
+data:  dades[, k] and as.factor(P)
+X-squared = 1888.4, df = 2, p-value < 2.2e-16
+
+[1] "valorsTest:"
+$rowpf
+   Xquali
+P            N          Y
+  1 0.25221033 0.74778967
+  2 0.98495212 0.01504788
+  3 0.56701031 0.43298969
+
+$vtest
+   Xquali
+P             N           Y
+  1 -40.8898338  40.8898338
+  2  41.9142938 -41.9142938
+  3   0.6822845  -0.6822845
+
+$pval
+   Xquali
+P           N         Y
+  1 0.0000000 0.0000000
+  2 0.0000000 0.0000000
+  3 0.2475295 0.2475295
+

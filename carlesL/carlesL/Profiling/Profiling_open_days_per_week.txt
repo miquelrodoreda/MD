@@ -1,0 +1,12 @@
+[1] "Anàlisi per classes de la Variable: open_days_per_week"
+[1] "Estadístics per groups:"
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  1.000   6.000   7.000   6.296   7.000   7.000 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  1.000   6.000   7.000   6.512   7.000   7.000 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  2.000   6.000   7.000   6.503   7.000   7.000 
+[1] "p-valueANOVA: 1.40819981710067e-12"
+[1] "p-value Kruskal-Wallis: 4.13384884622261e-16"
+[1] "p-values ValorsTest: "
+[1] 1.298961e-13 5.427725e-10 7.791677e-03

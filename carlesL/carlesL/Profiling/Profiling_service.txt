@@ -1,0 +1,12 @@
+[1] "Anàlisi per classes de la Variable: service"
+[1] "Estadístics per groups:"
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  2.500   4.000   4.000   4.191   4.500   5.000 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  1.500   3.500   4.000   3.751   4.000   5.000 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  3.000   4.000   4.000   4.228   4.500   5.000 
+[1] "p-valueANOVA: 5.88874022384138e-119"
+[1] "p-value Kruskal-Wallis: 1.62949670232542e-141"
+[1] "p-values ValorsTest: "
+[1] 1.307759e-91 0.000000e+00 2.897221e-15

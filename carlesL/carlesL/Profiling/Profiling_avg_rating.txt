@@ -1,0 +1,12 @@
+[1] "Anàlisi per classes de la Variable: avg_rating"
+[1] "Estadístics per groups:"
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  2.500   4.000   4.000   4.206   4.500   5.000 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  1.000   3.500   4.000   3.702   4.000   5.000 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  3.000   4.000   4.500   4.293   4.500   5.000 
+[1] "p-valueANOVA: 1.72540448376949e-147"
+[1] "p-value Kruskal-Wallis: 1.03440791255135e-188"
+[1] "p-values ValorsTest: "
+[1] 1.573367e-107  0.000000e+00  6.409896e-25

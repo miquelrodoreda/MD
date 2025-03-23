@@ -1,0 +1,45 @@
+[1] "Anàlisi per classes de la Variable: excellent"
+[1] "Estadístics per groups:"
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   0.00    8.00   30.00   80.63   81.00 1921.00 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   0.00    4.00   12.00   47.05   32.00 3352.00 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   0.00   16.00   37.00   74.93   81.00  876.00 
+[1] "p-valueANOVA: 8.76411481373328e-09"
+[1] "p-value Kruskal-Wallis: 1.40238529025714e-59"
+[1] "p-values ValorsTest: "
+[1] 1.978941e-08 2.009894e-10 1.763727e-01
+[1] "P.values per class: 1"
+        price_level       vegan_options              awards 
+           0.00e+00            0.00e+00            0.00e+00 
+        gluten_free            cuisines   original_location 
+           0.00e+00            0.00e+00            0.00e+00 
+              meals              cortes          avg_rating 
+           0.00e+00            0.00e+00           1.57e-107 
+               food             service          atmosphere 
+           2.56e-99            1.31e-91            2.02e-57 
+total_reviews_count  open_days_per_week           excellent 
+           4.46e-14            1.30e-13            1.98e-08 
+[1] "P.values per class: 2"
+        price_level       vegan_options              awards 
+           0.00e+00            0.00e+00            0.00e+00 
+        gluten_free            cuisines   original_location 
+           0.00e+00            0.00e+00            0.00e+00 
+         avg_rating                food             service 
+           0.00e+00            0.00e+00            0.00e+00 
+         atmosphere               meals              cortes 
+           0.00e+00            0.00e+00            0.00e+00 
+total_reviews_count           excellent  open_days_per_week 
+           7.75e-11            2.01e-10            5.43e-10 
+[1] "P.values per class: 3"
+        price_level       vegan_options              awards 
+           0.00e+00            0.00e+00            0.00e+00 
+        gluten_free            cuisines   original_location 
+           0.00e+00            0.00e+00            0.00e+00 
+              meals              cortes          avg_rating 
+           0.00e+00            0.00e+00            6.41e-25 
+               food             service          atmosphere 
+           2.43e-18            2.90e-15            2.06e-09 
+ open_days_per_week total_reviews_count           excellent 
+           7.79e-03            1.53e-02            1.76e-01 

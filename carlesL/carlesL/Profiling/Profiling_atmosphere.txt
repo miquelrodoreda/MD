@@ -1,0 +1,12 @@
+[1] "Anàlisi per classes de la Variable: atmosphere"
+[1] "Estadístics per groups:"
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  2.500   4.000   4.000   4.094   4.500   5.000 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  1.500   3.500   4.000   3.779   4.000   5.000 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  3.000   4.000   4.000   4.116   4.500   5.000 
+[1] "p-valueANOVA: 1.12437495964832e-71"
+[1] "p-value Kruskal-Wallis: 3.75615431593431e-79"
+[1] "p-values ValorsTest: "
+[1] 2.015539e-57 0.000000e+00 2.061132e-09

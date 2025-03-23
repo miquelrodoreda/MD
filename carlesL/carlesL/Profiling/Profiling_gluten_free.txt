@@ -1,0 +1,45 @@
+[1] "Variable gluten_free"
+[1] "Categories = " "N"             "Y"            
+[1] "Condicionadas a clases:\n"
+[1] "Categories = " "N"             "Y"            
+[1] "Categories = " "N"             "Y"            
+[1] "Cross Table:"
+   P
+       1    2    3
+  N  368 1442  317
+  Y 1781   20   71
+[1] "Distribucions condicionades a columnes:"
+   
+P            N          Y
+  1 0.17301363 0.95138889
+  2 0.67795016 0.01068376
+  3 0.14903620 0.03792735
+[1] "Test Chi quadrat: "
+
+	Pearson's Chi-squared test
+
+data:  dades[, k] and as.factor(P)
+X-squared = 2461.9, df = 2, p-value < 2.2e-16
+
+[1] "valorsTest:"
+$rowpf
+   Xquali
+P            N          Y
+  1 0.17124244 0.82875756
+  2 0.98632011 0.01367989
+  3 0.81701031 0.18298969
+
+$vtest
+   Xquali
+P           N         Y
+  1 -49.26033  49.26033
+  2  43.71975 -43.71975
+  3  11.84490 -11.84490
+
+$pval
+   Xquali
+P              N            Y
+  1 0.000000e+00 0.000000e+00
+  2 0.000000e+00 0.000000e+00
+  3 1.143448e-32 0.000000e+00
+
